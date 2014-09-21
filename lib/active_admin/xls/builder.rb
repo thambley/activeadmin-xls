@@ -231,14 +231,11 @@ module ActiveAdmin
       def fill_row(row, column)
         case column
         when Hash
-          logger.debug "column is hash"
           column.each{|key, values| fill_row(row, values)}
         when Array
-          logger.debug "column is array"
           column.each{|value| fill_row(row, value)}
         else
           #raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
-          logger.debug "column is #{column.class}.  value: #{column}"
           row.push(column)
         end
       end
