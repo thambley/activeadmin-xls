@@ -21,7 +21,6 @@ module ActiveAdmin
       #   ActiveAdmin::Xls:Builder.new(Post, i18n: [:xls]) do
       #     delete_columns :id, :created_at, :updated_at
       #     column(:author_name) { |post| post.author.name }
-      #     column(:
       #     after_filter { |sheet|
       #       
       #     }
@@ -37,7 +36,7 @@ module ActiveAdmin
       # The default header style
       # @return [Hash]
       def header_format
-        @header_format ||= nil
+        @header_format ||= {}
       end
 
       # This has can be used to override the default header style for your
@@ -46,7 +45,7 @@ module ActiveAdmin
       # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb 
       # for more details on how to create and apply style.
       def header_format=(format_hash)
-        @header_format = Spreadsheet::Format.new format_hash
+        @header_format = header_format.merge(format_hash)
       end
 
       # Indicates that we do not want to serialize the column headers
@@ -174,7 +173,7 @@ module ActiveAdmin
       # @return [Array]
       def header_row(collection)
         row = sheet.row(0)
-        apply_format_to_row(row, header_format)
+        apply_format_to_row(row, create_format(header_format))
         fill_row(row, header_data_for(collection))
       end
 
@@ -214,14 +213,14 @@ module ActiveAdmin
         @book ||= ::Spreadsheet::Workbook.new
       end
 
-      def header_style_id
-        package.workbook.styles.add_style header_format
-      end
-
       def resource_columns(resource)
         [Column.new(:id)] + resource.content_columns.map do |column|
           Column.new(column.name.to_sym)
         end
+      end
+      
+      def create_format(format_hash)
+        Spreadsheet::Format.new format_hash
       end
       
       def apply_format_to_row(row, format)
