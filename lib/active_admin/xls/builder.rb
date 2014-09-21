@@ -228,22 +228,18 @@ module ActiveAdmin
         row.default_format = format if format
       end
       
-      def fill_row(row, column, model=nil)
+      def fill_row(row, column)
         case column
-        when String, Symbol
-          logger.debug "column is string or symbol.  value: " + column.to_s
-          row.push(model ? model.send(column) : column)
-        when Fixnum
-          logger.debug "column is fixnum.  value: " + column.to_s
-          row.push(column)
         when Hash
           logger.debug "column is hash"
-          column.each{|key, values| fill_row(row, values, model && model.send(key))}
+          column.each{|key, values| fill_row(row, values)}
         when Array
           logger.debug "column is array"
-          column.each{|value| fill_row(row, value, model)}
+          column.each{|value| fill_row(row, value)}
         else
-          raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
+          #raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
+          logger.debug "column is #{column.class}.  value: #{column}"
+          row.push(column)
         end
       end
 
