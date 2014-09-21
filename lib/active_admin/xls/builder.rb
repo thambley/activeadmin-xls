@@ -37,7 +37,7 @@ module ActiveAdmin
       # The default header style
       # @return [Hash]
       def header_format
-        @header_format ||= {}
+        @header_format ||= nil
       end
 
       # This has can be used to override the default header style for your
@@ -46,7 +46,7 @@ module ActiveAdmin
       # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb 
       # for more details on how to create and apply style.
       def header_format=(format_hash)
-        @header_format = header_format.merge(format_hash)
+        @header_format = Spreadsheet::Format.new format_hash
       end
 
       # Indicates that we do not want to serialize the column headers
@@ -143,10 +143,10 @@ module ActiveAdmin
       private
 
       def to_stream
-      stream = StringIO.new("")
+        stream = StringIO.new("")
         book.write stream
         clean_up
-        stream
+        stream.string
       end
 
       def clean_up
@@ -224,13 +224,23 @@ module ActiveAdmin
         end
       end
       
+      def apply_format_to_row(row, format)
+        row.default_format = format if format
+      end
+      
       def fill_row(row, column, model=nil)
         case column
         when String, Symbol
+          logger.debug "column is string or symbol.  value: " + column.to_s
           row.push(model ? model.send(column) : column)
+        when Fixnum
+          logger.debug "column is fixnum.  value: " + column.to_s
+          row.push(column)
         when Hash
+          logger.debug "column is hash"
           column.each{|key, values| fill_row(row, values, model && model.send(key))}
         when Array
+          logger.debug "column is array"
           column.each{|value| fill_row(row, value, model)}
         else
           raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
