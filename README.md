@@ -5,11 +5,11 @@ Active Admin Xls: Excel Spreadsheet Export for Active Admin
 
 **Author**:  Todd Hambley
 
-**Copyright**:    2014
+**Copyright**:    2014 ~ 2016
 
 **License**: MIT License
 
-**Latest Version**: 1.0.1
+**Latest Version**: 1.0.2
 
 **Release Date**: 2014.09.21
 
