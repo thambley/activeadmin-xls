@@ -1,3 +1,4 @@
+require 'rake'
 require 'active_admin'
 
 require 'active_admin/xls/version'
