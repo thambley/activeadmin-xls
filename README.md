@@ -9,7 +9,7 @@ Active Admin Xls: Excel Spreadsheet Export for Active Admin
 
 **License**: MIT License
 
-**Latest Version**: 1.0.2
+**Latest Version**: 1.0.3
 
 **Release Date**: 2014.09.21
 
