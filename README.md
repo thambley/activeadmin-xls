@@ -28,7 +28,7 @@ All resource index views will now include a link for download directly
 to xls.
 
 ```
-gem 'activeadmin-xls'
+gem 'activeadmin-xls', github: 'thambley/activeadmin-xls'
 ```
 
 Cool Toys
