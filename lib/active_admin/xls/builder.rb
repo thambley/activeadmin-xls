@@ -163,6 +163,9 @@ module ActiveAdmin
           
           collection.each do |resource|
             row = sheet.row(row_index)
+            if (style_hash = resource.try(:xls_style)).present?
+              apply_format_to_row(row, Spreadsheet::Format.new(style_hash))
+            end  
             fill_row(row, resource_data(resource))
             row_index += 1
           end
