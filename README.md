@@ -86,7 +86,7 @@ Below is an example of the DSL
 ActiveAdmin.register Post do
 
   # i18n_scope and header style are set via options
-  xlsx(:i18n_scope => [:active_admin, :xls, :post],
+  xls(:i18n_scope => [:active_admin, :xls, :post],
        :header_style => {:weight => :bold, :color => :blue }) do
 
     # Specify that you want to white list column output.
