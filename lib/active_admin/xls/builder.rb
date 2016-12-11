@@ -22,7 +22,7 @@ module ActiveAdmin
       #     delete_columns :id, :created_at, :updated_at
       #     column(:author_name) { |post| post.author.name }
       #     after_filter { |sheet|
-      #       
+      #
       #     }
       #   end
       #   @see ActiveAdmin::Axlsx::DSL
@@ -42,7 +42,7 @@ module ActiveAdmin
       # This has can be used to override the default header style for your
       # sheet. Any values you provide will be merged with the default styles.
       # Precidence is given to your hash
-      # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb 
+      # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb
       # for more details on how to create and apply style.
       def header_format=(format_hash)
         @header_format = header_format.merge(format_hash)
@@ -98,12 +98,14 @@ module ActiveAdmin
         @columns = []
       end
 
+      # ------ edited by jayce ----------
       # Add a column
       # @param [Symbol] name The name of the column.
+      # @param [Option] width can set column width
       # @param [Proc] block A block of code that is executed on the resource
       #                     when generating row data for this column.
-      def column(name, &block)
-        @columns << Column.new(name, block)
+      def column(name, args = { width: 15 }, &block)
+        @columns << Column.new(name, args, block)
       end
 
       # removes columns by name
@@ -125,13 +127,15 @@ module ActiveAdmin
 
       protected
 
+      # ------ edited by jayce ----------
       class Column
-        def initialize(name, block = nil)
+        def initialize(name, args, block = nil)
           @name = name
           @data = block || @name
+          @width = args[:width]
         end
 
-        attr_reader :name, :data
+        attr_reader :name, :data, :width
 
         def localized_name(i18n_scope = nil)
           return name.to_s.titleize unless i18n_scope
@@ -152,29 +156,40 @@ module ActiveAdmin
         @book = @sheet = nil
       end
 
+      # ------ edited by jayce ----------
       def export_collection(collection)
         if columns.any?
-          row_index = 0
+          row_index = start_row
 
           unless @skip_header
             header_row(collection)
-            row_index = 1
+            row_index = start_row + 1
           end
-          
+
           collection.each do |resource|
             row = sheet.row(row_index)
+            row.height = body_hight
             fill_row(row, resource_data(resource))
+
             row_index += 1
           end
         end
       end
 
+      # ------ edited by jayce ----------
       # tranform column names into array of localized strings
-      # @return [Array]
       def header_row(collection)
-        row = sheet.row(0)
+        row = sheet.row(start_row)
+        row.height = header_hight
         apply_format_to_row(row, create_format(header_format))
-        fill_row(row, header_data_for(collection))
+
+        resource = collection.first
+        columns.each_with_index  do |column, index|
+          content = column.localized_name(i18n_scope) if in_scope(resource, column)
+          sheet[start_row, index] = content
+          # set body_format for column
+          sheet.format_column index, body_format, width: column.width
+        end
       end
 
       def header_data_for(collection)
@@ -218,15 +233,15 @@ module ActiveAdmin
           Column.new(column.name.to_sym)
         end
       end
-      
+
       def create_format(format_hash)
         Spreadsheet::Format.new format_hash
       end
-      
+
       def apply_format_to_row(row, format)
         row.default_format = format if format
       end
-      
+
       def fill_row(row, column)
         case column
         when Hash
@@ -245,6 +260,57 @@ module ActiveAdmin
         else
           super
         end
+      end
+
+      # ------ add by jayce ----------
+      # set row height
+      def row_height=(settings)
+        settings.each do |setting|
+          sheet.row(setting[0]).height= setting[1]
+        end
+      end
+
+      # merge cells
+      def merge_cells=(cells)
+        cells.each do |cell={}|
+          sheet.merge_cells(cell[:start_row], cell[:start_col], cell[:end_row], cell[:end_col])
+        end
+      end
+
+      # set table body start row
+      def start_row=(row)
+        @start_row = row
+      end
+
+      def start_row
+        @start_row ||= 1
+      end
+
+      # set header hight
+      def header_hight=(height)
+        @header_hight = height
+      end
+
+      def header_hight
+        @header_hight ||= 20
+      end
+
+      # set body hight
+      def body_hight=(height)
+        @body_hight = height
+      end
+
+      def body_hight
+        @body_hight ||= 18
+      end
+
+      # set body format
+      def body_format=(format_hash)
+        @fmt = Spreadsheet::Format.new format_hash
+      end
+
+      def body_format
+        @fmt ||= nil
       end
     end
   end
