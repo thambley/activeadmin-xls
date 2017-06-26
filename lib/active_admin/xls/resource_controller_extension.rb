@@ -1,14 +1,12 @@
 module ActiveAdmin
   module Xls
     module ResourceControllerExtension
-      def self.included(base)
-        base.send :alias_method_chain, :per_page, :xls
-        base.send :alias_method_chain, :index, :xls
+      def self.prepended(base)
         base.send :respond_to, :xls
       end
 
-      def index_with_xls(&block)
-        index_without_xls do |format|
+      def index(&block)
+        super do |format|
           block.call format if block_given?
 
           format.xls do
@@ -21,12 +19,12 @@ module ActiveAdmin
       end
 
       # patching per_page to use the CSV record max for pagination when the format is xls
-      def per_page_with_xls
+      def per_page
         if request.format ==  Mime::Type.lookup_by_extension(:xls)
           return respond_to?(:max_per_page, true) ? max_per_page : active_admin_config.max_per_page
         end
 
-        per_page_without_xls
+        super
       end
 
       # Returns a filename for the xls file using the collection_name

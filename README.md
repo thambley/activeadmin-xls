@@ -36,19 +36,19 @@ Cool Toys
 
 Here are a few quick examples of things you can easily tweak.
 
-##localize column headers
+## localize column headers
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.i18n_scope = [:active_record, :models, :posts]
 end
 ```
 
-##Use blocks for adding computed fields
+## Use blocks for adding computed fields
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.column('author_name') do |resource|
     resource.author.name
@@ -56,26 +56,26 @@ ActiveAdmin.register Post do
 end
 ```
 
-##Change the column header format
+## Change the column header format
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.header_format = { :weight => :bold,
                                        :color => :blue }
 end
 ```
 
-##Remove columns
+## Remove columns
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.delete_columns :id, :created_at, :updated_at
 end
 ```
 
-#Using the DSL
+# Using the DSL
 
 Everything that you do with the config's default builder can be done via
 the resource DSL.
@@ -114,7 +114,7 @@ ActiveAdmin.register Post do
 end
 ```
 
-#Specs
+# Specs
 ------
 Running specs for this gem requires that you construct a rails application.
 To execute the specs, navigate to the gem directory,
@@ -128,7 +128,7 @@ bundle exec rake setup
 bundle exec rake
 ```
 
-#Copyright and License
+# Copyright and License
 ----------
 
 activeadmin-xls &copy; 2014 by [Todd Hambley](mailto:thambley@travelleaders.com).
