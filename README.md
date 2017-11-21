@@ -1,7 +1,6 @@
-Active Admin Xls: Excel Spreadsheet Export for Active Admin
-====================================
+# Active Admin Xls: Excel Spreadsheet Export for Active Admin
 
-**Git**:[http://github.com/thambley/activeadmin-xls](http://github.com/thambley/activeadmin-xls)
+**Git**: [http://github.com/thambley/activeadmin-xls](http://github.com/thambley/activeadmin-xls)
 
 **Author**:  Todd Hambley
 
@@ -13,13 +12,11 @@ Active Admin Xls: Excel Spreadsheet Export for Active Admin
 
 **Release Date**: 2014.09.21
 
-Synopsis
---------
+## Synopsis
 
 This gem provides xls downloads for Active Admin resources.
 
 This gem borrows heavily from [https://github.com/randym/activeadmin-axlsx](https://github.com/randym/activeadmin-axlsx) and [https://github.com/splendeo/to_xls](https://github.com/splendeo/to_xls).
-
 
 Usage example:
 
@@ -27,28 +24,27 @@ Add the following to your Gemfile and you are good to go.
 All resource index views will now include a link for download directly
 to xls.
 
-```
+```ruby
 gem 'activeadmin-xls'
 ```
 
-Cool Toys
----------
+## Cool Toys
 
 Here are a few quick examples of things you can easily tweak.
 
-##localize column headers
+### Localize column headers
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.i18n_scope = [:active_record, :models, :posts]
 end
 ```
 
-##Use blocks for adding computed fields
+### Use blocks for adding computed fields
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.column('author_name') do |resource|
     resource.author.name
@@ -56,26 +52,26 @@ ActiveAdmin.register Post do
 end
 ```
 
-##Change the column header format
+### Change the column header format
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.header_format = { :weight => :bold,
                                        :color => :blue }
 end
 ```
 
-##Remove columns
+### Remove columns
 
 ```ruby
-#app/admin/posts.rb
+# app/admin/posts.rb
 ActiveAdmin.register Post do
   config.xls_builder.delete_columns :id, :created_at, :updated_at
 end
 ```
 
-#Using the DSL
+## Using the DSL
 
 Everything that you do with the config's default builder can be done via
 the resource DSL.
@@ -86,7 +82,7 @@ Below is an example of the DSL
 ActiveAdmin.register Post do
 
   # i18n_scope and header style are set via options
-  xlsx(:i18n_scope => [:active_admin, :xls, :post],
+  xls(:i18n_scope => [:active_admin, :xls, :post],
        :header_style => {:weight => :bold, :color => :blue }) do
 
     # Specify that you want to white list column output.
@@ -114,22 +110,21 @@ ActiveAdmin.register Post do
 end
 ```
 
-#Specs
-------
+## Specs
+
 Running specs for this gem requires that you construct a rails application.
 To execute the specs, navigate to the gem directory,
 run bundle install and run these to rake tasks:
 
-```
+```text
 bundle exec rake setup
 ```
 
-```
+```text
 bundle exec rake
 ```
 
-#Copyright and License
-----------
+## Copyright and License
 
 activeadmin-xls &copy; 2014 by [Todd Hambley](mailto:thambley@travelleaders.com).
 
