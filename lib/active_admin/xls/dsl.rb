@@ -2,11 +2,13 @@ module ActiveAdmin
   module Xls
     # extends activeadmin dsl to include xls
     module DSL
-      delegate(:ignore_columns,
+      delegate(:after_filter,
+               :before_filter,
                :column,
-               :after_filter,
-               :i18n_scope,
+               :delete_columns,
                :header_format,
+               :header_style,
+               :i18n_scope,
                :skip_header,
                :whitelist,
                to: :xls_builder,

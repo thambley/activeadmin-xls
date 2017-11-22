@@ -40,6 +40,8 @@ module ActiveAdmin
         @header_format ||= {}
       end
 
+      alias header_style header_format
+
       # This has can be used to override the default header style for your
       # sheet. Any values you provide will be merged with the default styles.
       # Precidence is given to your hash
@@ -48,6 +50,8 @@ module ActiveAdmin
       def header_format=(format_hash)
         @header_format = header_format.merge(format_hash)
       end
+
+      alias header_style= header_format=
 
       # Indicates that we do not want to serialize the column headers
       def skip_header
