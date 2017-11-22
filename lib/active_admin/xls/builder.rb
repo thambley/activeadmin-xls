@@ -5,24 +5,25 @@ module ActiveAdmin
   module Xls
     # Builder for xls data.
     class Builder
-
       include MethodOrProcHelper
 
-      # @param resource_class The resource this builder generate column information for.
+      # @param resource_class The resource this builder generate column
+      #   information for.
       # @param [Hash] options the options for this builder
       # @option [Hash] :header_format - a hash of format properties to apply
-      #   to the header row. Any properties specified will be merged with the default
-      #   header styles. @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb
+      #   to the header row. Any properties specified will be merged with the
+      #   default header styles. @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb
       # @option [Array] :i18n_scope - the I18n scope to use when looking
       #   up localized column headers.
-      # @param [Block] Any block given will evaluated against this instance of Builder.
-      #   That means you can call any method on the builder from withing that block.
+      # @param [Block] Any block given will evaluated against this instance of
+      #   Builder. That means you can call any method on the builder from within
+      #   that block.
       # @example
       #   ActiveAdmin::Xls:Builder.new(Post, i18n: [:xls]) do
       #     delete_columns :id, :created_at, :updated_at
       #     column(:author_name) { |post| post.author.name }
       #     after_filter { |sheet|
-      #       
+      #
       #     }
       #   end
       #   @see ActiveAdmin::Axlsx::DSL
@@ -30,7 +31,7 @@ module ActiveAdmin
         @skip_header = false
         @columns = resource_columns(resource_class)
         parse_options options
-        instance_eval &block if block_given?
+        instance_eval(&block) if block_given?
       end
 
       # The default header style
@@ -42,7 +43,7 @@ module ActiveAdmin
       # This has can be used to override the default header style for your
       # sheet. Any values you provide will be merged with the default styles.
       # Precidence is given to your hash
-      # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb 
+      # @see https://github.com/zdavatz/spreadsheet/blob/master/lib/spreadsheet/format.rb
       # for more details on how to create and apply style.
       def header_format=(format_hash)
         @header_format = header_format.merge(format_hash)
@@ -53,7 +54,8 @@ module ActiveAdmin
         @skip_header = true
       end
 
-      # The scope to use when looking up column names to generate the report header
+      # The scope to use when looking up column names to generate the
+      # report header
       def i18n_scope
         @i18n_scope ||= nil
       end
@@ -61,12 +63,10 @@ module ActiveAdmin
       # This is the I18n scope that will be used when looking up your
       # colum names in the current I18n locale.
       # If you set it to [:active_admin, :resources, :posts] the
-      # serializer will render the value at active_admin.resources.posts.title in the
-      # current translations
+      # serializer will render the value at active_admin.resources.posts.title
+      # in the current translations
       # @note If you do not set this, the column name will be titleized.
-      def i18n_scope=(scope)
-        @i18n_scope = scope
-      end
+      attr_writer :i18n_scope
 
       # The stored block that will be executed after your report is generated.
       def after_filter(&block)
@@ -87,13 +87,14 @@ module ActiveAdmin
       attr_reader :collection
 
       # removes all columns from the builder. This is useful when you want to
-      # only render specific columns. To remove specific columns use ignore_column.
+      # only render specific columns. To remove specific columns use
+      # ignore_column.
       def clear_columns
         @columns = []
       end
 
-      # Clears the default columns array so you can whitelist only the columns you
-      # want to export
+      # Clears the default columns array so you can whitelist only the columns
+      # you want to export
       def whitelist
         @columns = []
       end
@@ -123,8 +124,7 @@ module ActiveAdmin
         to_stream
       end
 
-      protected
-
+      # Xls column
       class Column
         def initialize(name, block = nil)
           @name = name
@@ -142,7 +142,7 @@ module ActiveAdmin
       private
 
       def to_stream
-        stream = StringIO.new("")
+        stream = StringIO.new('')
         book.write stream
         clean_up
         stream.string
@@ -153,19 +153,17 @@ module ActiveAdmin
       end
 
       def export_collection(collection)
-        if columns.any?
-          row_index = 0
+        return if columns.none?
+        row_index = 0
 
-          unless @skip_header
-            header_row(collection)
-            row_index = 1
-          end
-          
-          collection.each do |resource|
-            row = sheet.row(row_index)
-            fill_row(row, resource_data(resource))
-            row_index += 1
-          end
+        unless @skip_header
+          header_row(collection)
+          row_index = 1
+        end
+
+        collection.each do |resource|
+          fill_row(sheet.row(row_index), resource_data(resource))
+          row_index += 1
         end
       end
 
@@ -190,13 +188,14 @@ module ActiveAdmin
 
       def parse_options(options)
         options.each do |key, value|
-          self.send("#{key}=", value) if self.respond_to?("#{key}=") && value != nil
+          send("#{key}=", value) if respond_to?("#{key}=") && !value.nil?
         end
       end
 
       def resource_data(resource)
-        columns.map  do |column|
-          call_method_or_proc_on resource, column.data if in_scope(resource, column)
+        columns.map do |column|
+          call_method_or_proc_on resource, column.data if in_scope(resource,
+                                                                   column)
         end
       end
 
@@ -218,23 +217,24 @@ module ActiveAdmin
           Column.new(column.name.to_sym)
         end
       end
-      
+
       def create_format(format_hash)
         Spreadsheet::Format.new format_hash
       end
-      
+
       def apply_format_to_row(row, format)
         row.default_format = format if format
       end
-      
+
       def fill_row(row, column)
         case column
         when Hash
-          column.each{|key, values| fill_row(row, values)}
+          column.each_value { |values| fill_row(row, values) }
         when Array
-          column.each{|value| fill_row(row, value)}
+          column.each { |value| fill_row(row, value) }
         else
-          #raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
+          # raise ArgumentError,
+          #       "column #{column} has an invalid class (#{ column.class })"
           row.push(column)
         end
       end
@@ -245,6 +245,10 @@ module ActiveAdmin
         else
           super
         end
+      end
+
+      def respond_to_missing?(method_name, include_private = false)
+        @view_context.respond_to?(method_name) || super
       end
     end
   end
