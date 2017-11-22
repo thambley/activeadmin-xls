@@ -4,13 +4,13 @@
 
 **Author**:  Todd Hambley
 
-**Copyright**:    2014 ~ 2016
+**Copyright**:    2014 ~ 2017
 
 **License**: MIT License
 
-**Latest Version**: 1.0.3
+**Latest Version**: 1.0.4
 
-**Release Date**: 2014.09.21
+**Release Date**: 2017.11.22
 
 ## Synopsis
 
@@ -57,8 +57,8 @@ end
 ```ruby
 # app/admin/posts.rb
 ActiveAdmin.register Post do
-  config.xls_builder.header_format = { :weight => :bold,
-                                       :color => :blue }
+  config.xls_builder.header_format = { weight: :bold,
+                                       color: :blue }
 end
 ```
 
@@ -82,8 +82,8 @@ Below is an example of the DSL
 ActiveAdmin.register Post do
 
   # i18n_scope and header style are set via options
-  xls(:i18n_scope => [:active_admin, :xls, :post],
-       :header_style => {:weight => :bold, :color => :blue }) do
+  xls(i18n_scope: [:active_admin, :xls, :post],
+      header_format: { weight: :bold, color: :blue }) do
 
     # Specify that you want to white list column output.
     # whitelist
@@ -95,14 +95,14 @@ ActiveAdmin.register Post do
     delete_columns :id, :created_at, :updated_at
 
     # adding a column to the report
-    column(:author) { |resource| "#{resource.author.first_name} #{resource.author.last_name}" }
+    column(:author) { |post| "#{post.author.first_name} #{post.author.last_name}" }
 
-    # creating a chart and inserting additional data with after_filter
-    after_filter { |sheet|
+    # inserting additional data with after_filter
+    after_filter do |sheet|
       # todo
-    }
+    end
 
-    # iserting data with before_filter
+    # inserting data with before_filter
     before_filter do |sheet|
       # todo
     end
