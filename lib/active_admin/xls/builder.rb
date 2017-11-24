@@ -29,9 +29,10 @@ module ActiveAdmin
       #   @see ActiveAdmin::Axlsx::DSL
       def initialize(resource_class, options = {}, &block)
         @skip_header = false
-        @columns = resource_columns(resource_class)
-        parse_options options
-        instance_eval(&block) if block_given?
+        @resource_class = resource_class
+        @columns = []
+        @options = options
+        @block = block
       end
 
       # The default header style
@@ -83,7 +84,9 @@ module ActiveAdmin
       end
 
       # The columns this builder will be serializing
-      attr_reader :columns
+      def columns
+        @columns ||= resource_columns(@resource_class)
+      end
 
       # The collection we are serializing.
       # @note This is only available after serialize has been called,
@@ -99,31 +102,30 @@ module ActiveAdmin
 
       # Clears the default columns array so you can whitelist only the columns
       # you want to export
-      def whitelist
-        @columns = []
-      end
+      alias whitelist clear_columns
 
       # Add a column
       # @param [Symbol] name The name of the column.
       # @param [Proc] block A block of code that is executed on the resource
       #                     when generating row data for this column.
       def column(name, &block)
-        @columns << Column.new(name, block)
+        columns << Column.new(name, block)
       end
 
       # removes columns by name
       # each column_name should be a symbol
       def delete_columns(*column_names)
-        @columns.delete_if { |column| column_names.include?(column.name) }
+        columns.delete_if { |column| column_names.include?(column.name) }
       end
 
       # Serializes the collection provided
       # @return [Spreadsheet::Workbook]
       def serialize(collection, view_context)
         @collection = collection
-        @view_context = view_context
+        parse_options(@options)
+        columns = exec_setup_block(view_context)
         apply_filter @before_filter
-        export_collection(collection)
+        export_collection(collection, columns)
         apply_filter @after_filter
         to_stream
       end
@@ -145,6 +147,13 @@ module ActiveAdmin
 
       private
 
+      def exec_setup_block(view_context = nil)
+        @view_context = view_context
+        @columns = resource_columns(@resource_class)
+        instance_exec(&@block) if @block.present?
+        columns
+      end
+
       def to_stream
         stream = StringIO.new('')
         book.write stream
@@ -156,30 +165,30 @@ module ActiveAdmin
         @book = @sheet = nil
       end
 
-      def export_collection(collection)
+      def export_collection(collection, columns)
         return if columns.none?
         row_index = 0
 
         unless @skip_header
-          header_row(collection)
+          header_row(collection, columns)
           row_index = 1
         end
 
         collection.each do |resource|
-          fill_row(sheet.row(row_index), resource_data(resource))
+          fill_row(sheet.row(row_index), resource_data(resource, columns))
           row_index += 1
         end
       end
 
       # tranform column names into array of localized strings
       # @return [Array]
-      def header_row(collection)
+      def header_row(collection, columns)
         row = sheet.row(0)
         apply_format_to_row(row, create_format(header_format))
-        fill_row(row, header_data_for(collection))
+        fill_row(row, header_data_for(collection, columns))
       end
 
-      def header_data_for(collection)
+      def header_data_for(collection, columns)
         resource = collection.first
         columns.map do |column|
           column.localized_name(i18n_scope) if in_scope(resource, column)
@@ -196,7 +205,7 @@ module ActiveAdmin
         end
       end
 
-      def resource_data(resource)
+      def resource_data(resource, columns)
         columns.map do |column|
           call_method_or_proc_on resource, column.data if in_scope(resource,
                                                                    column)
