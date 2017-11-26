@@ -144,10 +144,11 @@ module ActiveAdmin
       # @return [Spreadsheet::Workbook]
       def serialize(collection, view_context)
         @collection = collection
+        @view_context = view_context
         parse_options(@options)
-        columns = exec_setup_block(view_context)
+        load_columns unless @columns_loaded
         apply_filter @before_filter
-        export_collection(collection, columns)
+        export_collection(collection)
         apply_filter @after_filter
         to_stream
       end
@@ -169,19 +170,15 @@ module ActiveAdmin
 
       private
 
-      def exec_setup_block(view_context = nil)
-        @view_context = view_context
-        load_columns unless @columns_loaded
-        instance_exec(&@block) if @block.present?
-        columns
-      end
-
       def load_columns
         return if @columns_loaded
         @columns = resource_columns(@resource_class)
         @columns_loaded = true
         @column_updates.each(&:call)
         @column_updates = []
+        instance_exec(&@block) if @block.present?
+        @block = nil
+        columns
       end
 
       def to_stream
@@ -195,30 +192,30 @@ module ActiveAdmin
         @book = @sheet = nil
       end
 
-      def export_collection(collection, columns)
+      def export_collection(collection)
         return if columns.none?
         row_index = 0
 
         unless @skip_header
-          header_row(collection, columns)
+          header_row(collection)
           row_index = 1
         end
 
         collection.each do |resource|
-          fill_row(sheet.row(row_index), resource_data(resource, columns))
+          fill_row(sheet.row(row_index), resource_data(resource))
           row_index += 1
         end
       end
 
       # tranform column names into array of localized strings
       # @return [Array]
-      def header_row(collection, columns)
+      def header_row(collection)
         row = sheet.row(0)
         apply_format_to_row(row, create_format(header_format))
-        fill_row(row, header_data_for(collection, columns))
+        fill_row(row, header_data_for(collection))
       end
 
-      def header_data_for(collection, columns)
+      def header_data_for(collection)
         resource = collection.first
         columns.map do |column|
           column.localized_name(i18n_scope) if in_scope(resource, column)
@@ -235,7 +232,7 @@ module ActiveAdmin
         end
       end
 
-      def resource_data(resource, columns)
+      def resource_data(resource)
         columns.map do |column|
           call_method_or_proc_on resource, column.data if in_scope(resource,
                                                                    column)
