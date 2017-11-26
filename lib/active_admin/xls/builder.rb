@@ -31,6 +31,8 @@ module ActiveAdmin
         @skip_header = false
         @resource_class = resource_class
         @columns = []
+        @columns_loaded = false
+        @column_updates = []
         @options = options
         @block = block
       end
@@ -85,7 +87,10 @@ module ActiveAdmin
 
       # The columns this builder will be serializing
       def columns
-        @columns ||= resource_columns(@resource_class)
+        # execute each update from @column_updates
+        # set @columns_loaded = true
+        load_columns unless @columns_loaded
+        @columns
       end
 
       # The collection we are serializing.
@@ -97,6 +102,9 @@ module ActiveAdmin
       # only render specific columns. To remove specific columns use
       # ignore_column.
       def clear_columns
+        @columns_loaded = true
+        @column_updates = []
+
         @columns = []
       end
 
@@ -109,13 +117,27 @@ module ActiveAdmin
       # @param [Proc] block A block of code that is executed on the resource
       #                     when generating row data for this column.
       def column(name, &block)
-        columns << Column.new(name, block)
+        if @columns_loaded
+          columns << Column.new(name, block)
+        else
+          column_lambda = lambda do
+            column(name, &block)
+          end
+          @column_updates << column_lambda
+        end
       end
 
       # removes columns by name
       # each column_name should be a symbol
       def delete_columns(*column_names)
-        columns.delete_if { |column| column_names.include?(column.name) }
+        if @columns_loaded
+          columns.delete_if { |column| column_names.include?(column.name) }
+        else
+          delete_lambda = lambda do
+            delete_columns(*column_names)
+          end
+          @column_updates << delete_lambda
+        end
       end
 
       # Serializes the collection provided
@@ -149,9 +171,17 @@ module ActiveAdmin
 
       def exec_setup_block(view_context = nil)
         @view_context = view_context
-        @columns = resource_columns(@resource_class)
+        load_columns unless @columns_loaded
         instance_exec(&@block) if @block.present?
         columns
+      end
+
+      def load_columns
+        return if @columns_loaded
+        @columns = resource_columns(@resource_class)
+        @columns_loaded = true
+        @column_updates.each(&:call)
+        @column_updates = []
       end
 
       def to_stream
