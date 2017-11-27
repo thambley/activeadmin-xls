@@ -33,8 +33,8 @@ module ActiveAdmin
         @columns = []
         @columns_loaded = false
         @column_updates = []
-        @options = options
-        @block = block
+        parse_options options
+        instance_eval(&block) if block_given?
       end
 
       # The default header style
@@ -63,9 +63,7 @@ module ActiveAdmin
 
       # The scope to use when looking up column names to generate the
       # report header
-      def i18n_scope
-        @i18n_scope ||= nil
-      end
+      attr_reader :i18n_scope
 
       # This is the I18n scope that will be used when looking up your
       # colum names in the current I18n locale.
@@ -142,10 +140,9 @@ module ActiveAdmin
 
       # Serializes the collection provided
       # @return [Spreadsheet::Workbook]
-      def serialize(collection, view_context)
+      def serialize(collection, view_context = nil)
         @collection = collection
         @view_context = view_context
-        parse_options(@options)
         load_columns unless @columns_loaded
         apply_filter @before_filter
         export_collection(collection)
@@ -176,8 +173,6 @@ module ActiveAdmin
         @columns_loaded = true
         @column_updates.each(&:call)
         @column_updates = []
-        instance_exec(&@block) if @block.present?
-        @block = nil
         columns
       end
 
@@ -194,11 +189,11 @@ module ActiveAdmin
 
       def export_collection(collection)
         return if columns.none?
-        row_index = 0
+        row_index = sheet.dimensions[1]
 
         unless @skip_header
-          header_row(collection)
-          row_index = 1
+          header_row(sheet.row(row_index), collection)
+          row_index += 1
         end
 
         collection.each do |resource|
@@ -209,8 +204,7 @@ module ActiveAdmin
 
       # tranform column names into array of localized strings
       # @return [Array]
-      def header_row(collection)
-        row = sheet.row(0)
+      def header_row(row, collection)
         apply_format_to_row(row, create_format(header_format))
         fill_row(row, header_data_for(collection))
       end

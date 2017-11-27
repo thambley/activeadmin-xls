@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+source 'https://rubygems.org'
+
+ruby_major_version = RUBY_VERSION.split('.')[0].to_i
+ruby_minor_version = RUBY_VERSION.split('.')[1].to_i
+
+eval_gemfile(File.expand_path(File.join('..', 'Gemfile'), __dir__))
+
+gem 'rails', '3.2.22.5'
+
+gem 'activeadmin', '0.6.6'
+
+group :assets do
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails',   '~> 3.2.3'
+
+  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
+  # gem 'therubyracer', :platforms => :ruby
+
+  gem 'uglifier', '>= 1.0.3'
+end
+
+group :test do
+  gem 'shoulda-matchers', '~> 2.8.0'
+  if ruby_major_version > 2 || (ruby_major_version == 2 && ruby_minor_version > 1)
+    gem 'test-unit', '~> 3.0'
+  end
+end
+
+gemspec path: "../"
