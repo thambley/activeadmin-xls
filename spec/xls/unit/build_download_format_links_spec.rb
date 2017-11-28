@@ -19,10 +19,10 @@ describe ActiveAdmin::Views::PaginatedCollection do
 
   let(:view) do
     view = mock_action_view
-    allow(view.request).to receive(:query_parameters) do
-      { controller: 'admin/posts', action: 'index', page: '1' }
+    allow(view.request).to receive(:query_parameters) { { page: '1' } }
+    allow(view.request).to receive(:path_parameters) do
+      { controller: 'admin/posts', action: 'index' }
     end
-    view.controller.params = { controller: 'admin/posts', action: 'index' }
     view
   end
 
@@ -41,6 +41,8 @@ describe ActiveAdmin::Views::PaginatedCollection do
   let(:pagination) { paginated_collection(collection) }
 
   before do
+    allow(collection).to receive(:except) { collection } unless collection.respond_to? :except
+    allow(collection).to receive(:group_values) { [] } unless collection.respond_to? :group_values
     allow(collection).to receive(:reorder) { collection }
   end
 

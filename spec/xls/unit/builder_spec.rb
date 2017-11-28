@@ -99,6 +99,8 @@ module ActiveAdmin
         end
 
         before do
+          allow(User).to receive(:all) { users }
+          allow(Post).to receive(:all) { posts }
           # disable clean up so we can get the book.
           allow(builder).to receive(:clean_up) { false }
           builder.serialize(Post.all)
@@ -114,12 +116,6 @@ module ActiveAdmin
       end
 
       context 'Sheet generation with a highly customized configuration.' do
-        let!(:users) { [User.new(first_name: 'bob', last_name: 'nancy')] }
-
-        let!(:posts) do
-          [Post.new(title: 'bob', body: 'is a swell guy', author: users.first)]
-        end
-
         let!(:builder) do
           Builder.new(Post, header_style: { size: 10, color: 'red' }, i18n_scope: %i[xls post]) do
             delete_columns :id, :created_at, :updated_at
@@ -131,17 +127,19 @@ module ActiveAdmin
               sheet.update_row(row_number)
               row_number += 1
               sheet.update_row(row_number, 'Author Name', 'Number of Posts')
-              data = []
-              labels = []
-              User.all.each do |user|
+              users = collection.map(&:author).uniq(&:id)
+              users.each do |user|
                 row_number += 1
-                data << user.posts.size
-                labels << "#{user.first_name} #{user.last_name}"
-                sheet.update_row(row_number, labels.last, data.last)
+                sheet.update_row(row_number,
+                                 "#{user.first_name} #{user.last_name}",
+                                 user.posts.size)
               end
             end
             before_filter do |sheet|
-              collection.first.author.first_name = 'Set In Proc'
+              users = collection.map(&:author)
+              users.each do |user|
+                user.first_name = 'Set In Proc' if user.first_name == 'bob'
+              end
               row_number = sheet.dimensions[1]
               sheet.update_row(row_number, 'Created', Time.zone.now)
               row_number += 1
@@ -151,8 +149,12 @@ module ActiveAdmin
         end
 
         before do
-          allow(User).to receive(:all) { users }
-          allow(Post).to receive(:all) { posts }
+          Post.all.each(&:destroy)
+          User.all.each(&:destroy)
+          @user = User.create!(first_name: 'bob', last_name: 'nancy')
+          @post = Post.create!(title: 'bob',
+                               body: 'is a swell guy',
+                               author: @user)
           # disable clean up so we can get the book.
           allow(builder).to receive(:clean_up) { false }
           builder.serialize(Post.all)

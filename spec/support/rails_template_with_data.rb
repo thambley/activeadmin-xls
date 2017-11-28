@@ -7,7 +7,7 @@ apply File.expand_path('../rails_template.rb', __FILE__)
 end
 
 scopes = <<-SCOPES
-  scope :all, :default => true
+  scope :all, default: true
 
   scope :drafts do |posts|
     posts.where(["published_at IS NULL"])
@@ -32,6 +32,7 @@ inject_into_file 'app/admin/post.rb',
 
 # Setup some default data
 append_file 'db/seeds.rb', <<-SEEDS
+
   users = ['Jimi Hendrix', 'Jimmy Page', 'Yngwie Malmsteen', 'Eric Clapton', 'Kirk Hammett'].collect do |name|
     first, last = name.split(" ")
     User.create!  first_name: first,

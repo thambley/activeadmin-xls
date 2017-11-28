@@ -1,5 +1,4 @@
 #!/usr/bin/env rake
-require 'activeadmin'
 require 'rspec/core/rake_task'
 
 desc 'Creates a test rails app for the specs to run against'

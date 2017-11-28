@@ -18,9 +18,11 @@ gsub_file 'config/database.yml',
 generate :model, 'post title:string body:text published_at:datetime author_id:integer category_id:integer'
 inject_into_file 'app/models/post.rb', "  belongs_to :author, class_name: 'User'\n  belongs_to :category\n  accepts_nested_attributes_for :author\n", after: "class Post < ActiveRecord::Base\n"
 # Rails 3.2.3 model generator declare attr_accessible
-inject_into_file 'app/models/post.rb',
-                 "  attr_accessible :author\n",
-                 before: 'end'
+if Rails::VERSION::MAJOR == 3
+  inject_into_file 'app/models/post.rb',
+                  "  attr_accessible :author\n",
+                  before: 'end'
+end
 generate :model, 'user type:string first_name:string last_name:string username:string age:integer'
 inject_into_file 'app/models/user.rb', "  has_many :posts, foreign_key: 'author_id'\n", after: "class User < ActiveRecord::Base\n"
 generate :model, 'publisher --migration=false --parent=User'
@@ -56,10 +58,10 @@ inject_into_file 'config/environments/test.rb',
                  "  config.action_mailer.default_url_options = { host: 'example.com' }\n",
                  after: "config.cache_classes = true\n"
 
-puts File.expand_path("../../../lib/activeadmin-xls", __FILE__)
+puts File.expand_path('../../../lib/activeadmin-xls', __FILE__)
 # Add our local Active Admin to the load path
 inject_into_file 'config/environment.rb',
-                 "\nrequire \"#{File.expand_path("../../../lib/activeadmin-xls", __FILE__)}\"\n",
+                 "\nrequire \"#{File.expand_path('../../../lib/activeadmin-xls', __FILE__)}\"\n",
                  after: "require File.expand_path('../application', __FILE__)"
 
 # Add some translations
@@ -75,14 +77,22 @@ run 'rm -r spec'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-# we need this routing path, named "logout_path", for testing
-route <<-ROUTE
+if Rails::VERSION::MAJOR == 3
+  # we need this routing path, named "logout_path", for testing
+  route <<-ROUTE
   devise_scope :user do
     match '/admin/logout' => 'active_admin/devise/sessions#destroy', as: :logout
   end
-ROUTE
+  ROUTE
+end
 
 generate :'active_admin:install'
+
+if Rails::VERSION::MAJOR > 3
+  inject_into_file 'config/initializers/active_admin.rb',
+                   "  config.download_links = %i[csv xml json xls]\n",
+                   after: "  # == Download Links\n"
+end
 
 # Setup a root path for devise
 route "root to: 'admin/dashboard#index'"

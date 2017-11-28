@@ -1,7 +1,10 @@
 require 'simplecov'
 SimpleCov.start do
   add_filter '/rails/'
+  add_filter '/spec/'
 end
+
+ENV['RAILS_ENV'] = 'test'
 
 # prepare ENV for rails
 require 'rails'
@@ -17,12 +20,19 @@ unless File.exist?(ENV['RAILS_ROOT'])
 end
 
 # load up activeadmin and activeadmin-xls
+require 'active_record'
+require 'active_admin'
+require 'devise'
 require 'activeadmin-xls'
 ActiveAdmin.application.load_paths = [ENV['RAILS_ROOT'] + '/app/admin']
+
 # start up rails
 require ENV['RAILS_ROOT'] + '/config/environment'
 
 # and finally,here's rspec
 require 'rspec/rails'
+
+# Disabling authentication in specs so that we don't have to worry about
+# it allover the place
 ActiveAdmin.application.authentication_method = false
 ActiveAdmin.application.current_user_method = false
