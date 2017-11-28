@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+source 'https://rubygems.org'
+
+ruby_major_version = RUBY_VERSION.split('.')[0].to_i
+ruby_minor_version = RUBY_VERSION.split('.')[1].to_i
+
+eval_gemfile(File.expand_path(File.join('..', 'Gemfile'), __dir__))
+
+gem 'activeadmin', '1.0.0'
+gem 'devise', '~> 4.2'
+gem 'rails', '4.2.10'
+gem 'turbolinks', '~> 5.0.0'
+gem 'tzinfo-data'
+
+group :test do
+  gem 'shoulda-matchers', '~> 3.1'
+  if ruby_major_version > 2 || (ruby_major_version == 2 && ruby_minor_version > 1)
+    gem 'test-unit', '~> 3.0'
+  end
+end
+
+gemspec path: "../"
