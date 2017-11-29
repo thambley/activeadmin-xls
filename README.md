@@ -1,16 +1,8 @@
-# Active Admin Xls: Excel Spreadsheet Export for Active Admin
+# Active Admin Xls
 
-**Git**: [http://github.com/thambley/activeadmin-xls](http://github.com/thambley/activeadmin-xls)
+Excel Spreadsheet Export for [Active Admin](https://www.activeadmin.info/)
 
-**Author**:  Todd Hambley
-
-**Copyright**:    2014 ~ 2017
-
-**License**: MIT License
-
-**Latest Version**: 1.0.4
-
-**Release Date**: 2017.11.22
+[![Gem Version](https://badge.fury.io/rb/activeadmin-xls.svg)](https://badge.fury.io/rb/activeadmin-xls)
 
 ## Synopsis
 
@@ -25,10 +17,16 @@ All resource index views will now include a link for download directly
 to xls.
 
 ```ruby
-gem 'activeadmin-xls'
+gem 'activeadmin-xls' '~>1.0.0'
 ```
 
-## Cool Toys
+For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
+
+```ruby
+config.download_links = %i[csv xml json xls]
+```
+
+## Examples
 
 Here are a few quick examples of things you can easily tweak.
 
@@ -110,7 +108,7 @@ ActiveAdmin.register Post do
 end
 ```
 
-## Specs
+## Testing
 
 Running specs for this gem requires that you construct a rails application.
 
@@ -143,9 +141,3 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
 ```text
 BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 ```
-
-## Copyright and License
-
-activeadmin-xls &copy; 2014 by [Todd Hambley](mailto:thambley@travelleaders.com).
-
-activeadmin-xls is licensed under the MIT license. Please see the LICENSE document for more information.
