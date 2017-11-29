@@ -1,5 +1,5 @@
 # Sample translations used to test ActiveAdmin's I18n integration.
-  axlsx:
+  xls:
     post:
       id: ID
       title: Title

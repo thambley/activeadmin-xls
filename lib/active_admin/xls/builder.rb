@@ -29,7 +29,10 @@ module ActiveAdmin
       #   @see ActiveAdmin::Axlsx::DSL
       def initialize(resource_class, options = {}, &block)
         @skip_header = false
-        @columns = resource_columns(resource_class)
+        @resource_class = resource_class
+        @columns = []
+        @columns_loaded = false
+        @column_updates = []
         parse_options options
         instance_eval(&block) if block_given?
       end
@@ -60,9 +63,7 @@ module ActiveAdmin
 
       # The scope to use when looking up column names to generate the
       # report header
-      def i18n_scope
-        @i18n_scope ||= nil
-      end
+      attr_reader :i18n_scope
 
       # This is the I18n scope that will be used when looking up your
       # colum names in the current I18n locale.
@@ -83,7 +84,12 @@ module ActiveAdmin
       end
 
       # The columns this builder will be serializing
-      attr_reader :columns
+      def columns
+        # execute each update from @column_updates
+        # set @columns_loaded = true
+        load_columns unless @columns_loaded
+        @columns
+      end
 
       # The collection we are serializing.
       # @note This is only available after serialize has been called,
@@ -94,34 +100,50 @@ module ActiveAdmin
       # only render specific columns. To remove specific columns use
       # ignore_column.
       def clear_columns
+        @columns_loaded = true
+        @column_updates = []
+
         @columns = []
       end
 
       # Clears the default columns array so you can whitelist only the columns
       # you want to export
-      def whitelist
-        @columns = []
-      end
+      alias whitelist clear_columns
 
       # Add a column
       # @param [Symbol] name The name of the column.
       # @param [Proc] block A block of code that is executed on the resource
       #                     when generating row data for this column.
       def column(name, &block)
-        @columns << Column.new(name, block)
+        if @columns_loaded
+          columns << Column.new(name, block)
+        else
+          column_lambda = lambda do
+            column(name, &block)
+          end
+          @column_updates << column_lambda
+        end
       end
 
       # removes columns by name
       # each column_name should be a symbol
       def delete_columns(*column_names)
-        @columns.delete_if { |column| column_names.include?(column.name) }
+        if @columns_loaded
+          columns.delete_if { |column| column_names.include?(column.name) }
+        else
+          delete_lambda = lambda do
+            delete_columns(*column_names)
+          end
+          @column_updates << delete_lambda
+        end
       end
 
       # Serializes the collection provided
       # @return [Spreadsheet::Workbook]
-      def serialize(collection, view_context)
+      def serialize(collection, view_context = nil)
         @collection = collection
         @view_context = view_context
+        load_columns unless @columns_loaded
         apply_filter @before_filter
         export_collection(collection)
         apply_filter @after_filter
@@ -145,6 +167,15 @@ module ActiveAdmin
 
       private
 
+      def load_columns
+        return if @columns_loaded
+        @columns = resource_columns(@resource_class)
+        @columns_loaded = true
+        @column_updates.each(&:call)
+        @column_updates = []
+        columns
+      end
+
       def to_stream
         stream = StringIO.new('')
         book.write stream
@@ -158,11 +189,11 @@ module ActiveAdmin
 
       def export_collection(collection)
         return if columns.none?
-        row_index = 0
+        row_index = sheet.dimensions[1]
 
         unless @skip_header
-          header_row(collection)
-          row_index = 1
+          header_row(sheet.row(row_index), collection)
+          row_index += 1
         end
 
         collection.each do |resource|
@@ -173,14 +204,13 @@ module ActiveAdmin
 
       # tranform column names into array of localized strings
       # @return [Array]
-      def header_row(collection)
-        row = sheet.row(0)
+      def header_row(row, collection)
         apply_format_to_row(row, create_format(header_format))
         fill_row(row, header_data_for(collection))
       end
 
       def header_data_for(collection)
-        resource = collection.first
+        resource = collection.first || @resource_class.new
         columns.map do |column|
           column.localized_name(i18n_scope) if in_scope(resource, column)
         end.compact

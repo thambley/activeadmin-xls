@@ -19,30 +19,34 @@ describe ActiveAdmin::Views::PaginatedCollection do
 
   let(:view) do
     view = mock_action_view
-    view.request.stub!(:query_parameters).and_return({:controller => 'admin/posts', :action => 'index', :page => '1'})
-    view.controller.params = {:controller => 'admin/posts', :action => 'index'}
+    allow(view.request).to receive(:query_parameters) { { page: '1' } }
+    allow(view.request).to receive(:path_parameters) do
+      { controller: 'admin/posts', action: 'index' }
+    end
     view
   end
 
   # Helper to render paginated collections within an arbre context
   def paginated_collection(*args)
-    render_arbre_component({:paginated_collection_args => args}, view) do
+    render_arbre_component({ paginated_collection_args: args }, view) do
       paginated_collection(*paginated_collection_args)
     end
   end
 
   let(:collection) do
-    posts = [Post.new(:title => "First Post")]
+    posts = [Post.new(title: 'First Post')]
     Kaminari.paginate_array(posts).page(1).per(5)
   end
 
   let(:pagination) { paginated_collection(collection) }
 
   before do
-    collection.stub!(:reorder) { collection }
+    allow(collection).to receive(:except) { collection } unless collection.respond_to? :except
+    allow(collection).to receive(:group_values) { [] } unless collection.respond_to? :group_values
+    allow(collection).to receive(:reorder) { collection }
   end
 
-  it "renders the xls download link" do
-    pagination.children.last.content.should match(/XLS/)
+  it 'renders the xls download link' do
+    expect(pagination.children.last.content).to match(/XLS/)
   end
 end

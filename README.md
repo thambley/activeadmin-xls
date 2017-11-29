@@ -113,15 +113,35 @@ end
 ## Specs
 
 Running specs for this gem requires that you construct a rails application.
-To execute the specs, navigate to the gem directory,
-run bundle install and run these to rake tasks:
+
+To execute the specs, navigate to the gem directory, run bundle install and run these to rake tasks:
+
+### Rails 3.2
 
 ```text
-bundle exec rake setup
+bundle install --gemfile=gemfiles/rails_32.gemfile
 ```
 
 ```text
-bundle exec rake
+BUNDLE_GEMFILE=gemfiles/rails_32.gemfile bundle exec rake setup
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_32.gemfile bundle exec rake
+```
+
+### Rails 4.2
+
+```text
+bundle install --gemfile=gemfiles/rails_42.gemfile
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 ```
 
 ## Copyright and License

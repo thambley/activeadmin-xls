@@ -10,15 +10,22 @@ module ActiveAdmin
 
       def index_with_xls
         index_without_xls do |format|
-          yield format if block_given?
-
           format.xls do
-            xls = active_admin_config.xls_builder.serialize(collection,
-                                                            view_context)
+            xls_collection = if method(:find_collection).arity.zero?
+                               collection
+                             else
+                               find_collection except: :pagination
+                             end
+            xls = active_admin_config.xls_builder.serialize(
+              xls_collection,
+              view_context
+            )
             send_data(xls,
                       filename: xls_filename,
                       type: Mime::Type.lookup_by_extension(:xls))
           end
+
+          yield(format) if block_given?
         end
       end
 
