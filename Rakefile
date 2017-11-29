@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+require File.expand_path('../lib/active_admin/xls/version', __FILE__)
 require 'rspec/core/rake_task'
 
 desc 'Creates a test rails app for the specs to run against'
