@@ -15,9 +15,11 @@ Gem::Specification.new do |s|
   s.description = <<-DESC
   This gem provides excel/xls downloads for resources in Active Admin.
   DESC
-  s.files = `git ls-files`.split("\n").sort
-  s.test_files = `git ls-files -- {spec}/*`.split("\n")
-  s.test_files = Dir.glob('{spec/**/*}')
+
+  git_tracked_files = `git ls-files`.split("\n").sort
+  gem_ignored_files = `git ls-files -i -X .gemignore`.split("\n")
+
+  s.files = git_tracked_files - gem_ignored_files
 
   s.add_runtime_dependency 'activeadmin', '>= 0.6.6', '< 2'
   s.add_runtime_dependency 'spreadsheet', '~> 1.0'
