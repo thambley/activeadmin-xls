@@ -13,7 +13,10 @@ module ActiveAdmin
 
         ActiveAdmin::ResourceDSL.send :include, ActiveAdmin::Xls::DSL
         ActiveAdmin::Resource.send :include, ActiveAdmin::Xls::ResourceExtension
-        ActiveAdmin::ResourceController.send :include, ActiveAdmin::Xls::ResourceControllerExtension
+        ActiveAdmin::ResourceController.send(
+          :include,
+          ActiveAdmin::Xls::ResourceControllerExtension
+        )
       end
     end
   end
