@@ -43,7 +43,7 @@ describe ActiveAdmin::ResourceController do
       expect(controller.send(:per_page)).to eq(max_csv_records)
     end
 
-    it 'uses to the default per_page when we do not specify xls mime type' do
+    it 'uses the default per_page when we do not specify xls mime type' do
       controller.request.accept = 'text/html'
       aa_default_per_page = ActiveAdmin.application.default_per_page
       expect(controller.send(:per_page)).to eq(aa_default_per_page)
