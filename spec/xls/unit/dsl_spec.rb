@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 module ActiveAdmin
+  # tests for dsl
   module Xls
     describe ::ActiveAdmin::ResourceDSL do
       context 'in a registration block' do
@@ -42,6 +43,7 @@ module ActiveAdmin
         it 'has a before filter set' do
           expect(builder.instance_values['before_filter']).to be_a(Proc)
         end
+
         it 'has an after filter set' do
           expect(builder.instance_values['after_filter']).to be_a(Proc)
         end
