@@ -10,19 +10,19 @@ scopes = <<-SCOPES
   scope :all, default: true
 
   scope :drafts do |posts|
-    posts.where(["published_at IS NULL"])
+    posts.where(['published_at IS NULL'])
   end
 
   scope :scheduled do |posts|
-    posts.where(["posts.published_at IS NOT NULL AND posts.published_at > ?", Time.now.utc])
+    posts.where(['posts.published_at IS NOT NULL AND posts.published_at > ?', Time.now.utc])
   end
 
   scope :published do |posts|
-    posts.where(["posts.published_at IS NOT NULL AND posts.published_at < ?", Time.now.utc])
+    posts.where(['posts.published_at IS NOT NULL AND posts.published_at < ?', Time.now.utc])
   end
 
   scope :my_posts do |posts|
-    posts.where(:author_id => current_admin_user.id)
+    posts.where(author_id: current_admin_user.id)
   end
 SCOPES
 
@@ -35,10 +35,10 @@ append_file 'db/seeds.rb', <<-SEEDS
 
   users = ['Jimi Hendrix', 'Jimmy Page', 'Yngwie Malmsteen', 'Eric Clapton', 'Kirk Hammett'].collect do |name|
     first, last = name.split(" ")
-    User.create!  first_name: first,
-                  last_name: last,
-                  username: [first,last].join('-').downcase,
-                  age: rand(80)
+    User.create! first_name: first,
+                 last_name: last,
+                 username: [first, last].join('-').downcase,
+                 age: rand(80)
   end
 
   categories = ['Rock', 'Pop Rock', 'Alt-Country', 'Blues', 'Dub-Step'].collect do |name|

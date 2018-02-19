@@ -10,9 +10,11 @@ gsub_file 'config/database.yml', /^test:.*\n/, "test: &test\n"
 gsub_file 'config/database.yml',
           /\z/,
           "\ncucumber:\n  <<: *test\n  database: db/cucumber.sqlite3"
-gsub_file 'config/database.yml',
-          /\z/,
-          "\ncucumber_with_reloading:\n  <<: *test\n  database: db/cucumber.sqlite3"
+gsub_file(
+  'config/database.yml',
+  /\z/,
+  "\ncucumber_with_reloading:\n  <<: *test\n  database: db/cucumber.sqlite3"
+)
 
 # Generate some test models
 generate :model, 'post title:string body:text published_at:datetime author_id:integer category_id:integer'
@@ -20,26 +22,36 @@ inject_into_file 'app/models/post.rb', "  belongs_to :author, class_name: 'User'
 # Rails 3.2.3 model generator declare attr_accessible
 if Rails::VERSION::MAJOR == 3
   inject_into_file 'app/models/post.rb',
-                  "  attr_accessible :author\n",
-                  before: 'end'
+                   "  attr_accessible :author\n",
+                   before: 'end'
 end
 generate :model, 'user type:string first_name:string last_name:string username:string age:integer'
-inject_into_file 'app/models/user.rb', "  has_many :posts, foreign_key: 'author_id'\n", after: "class User < ActiveRecord::Base\n"
+inject_into_file 'app/models/user.rb',
+                 "  has_many :posts, foreign_key: 'author_id'\n",
+                 after: "class User < ActiveRecord::Base\n"
 generate :model, 'publisher --migration=false --parent=User'
 generate :model, 'category name:string description:text'
-inject_into_file 'app/models/category.rb', "  has_many :posts\n  accepts_nested_attributes_for :posts\n", after: "class Category < ActiveRecord::Base\n"
+inject_into_file 'app/models/category.rb',
+                 "  has_many :posts\n  accepts_nested_attributes_for :posts\n",
+                 after: "class Category < ActiveRecord::Base\n"
 generate :model, 'store name:string'
 
 # Generate a model with string ids
 generate :model, 'tag name:string'
-gsub_file(Dir['db/migrate/*_create_tags.rb'][0], /\:tags\sdo\s.*/, ":tags, id: false, primary_key: :id do |t|\n\t\t\tt.string :id\n" )
+gsub_file(
+  Dir['db/migrate/*_create_tags.rb'][0],
+  /\:tags\sdo\s.*/,
+  ":tags, id: false, primary_key: :id do |t|\n\t\t\tt.string :id\n"
+)
 id_model_setup = <<-MODEL
   self.primary_key = :id
   before_create :set_id
 
   private
   def set_id
-    self.id = 8.times.inject('') { |s,e| s << (i = Kernel.rand(62); i += ((i < 10) ? 48 : ((i < 36) ? 55 : 61 ))).chr }
+    self.id = 8.times.inject('') do |s,e|
+      s << (i = Kernel.rand(62); i += ((i < 10) ? 48 : ((i < 36) ? 55 : 61 ))).chr
+    end
   end
 MODEL
 
@@ -54,14 +66,16 @@ if Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR == 1 # Rails 3.1 Gotcha
 end
 
 # Configure default_url_options in test environment
-inject_into_file 'config/environments/test.rb',
-                 "  config.action_mailer.default_url_options = { host: 'example.com' }\n",
-                 after: "config.cache_classes = true\n"
+inject_into_file(
+  'config/environments/test.rb',
+  "  config.action_mailer.default_url_options = { host: 'example.com' }\n",
+  after: "config.cache_classes = true\n"
+)
 
-puts File.expand_path('../../../lib/activeadmin-xls', __FILE__)
+lib_path = File.expand_path('../../../lib/activeadmin-xlsx', __FILE__)
 # Add our local Active Admin to the load path
 inject_into_file 'config/environment.rb',
-                 "\nrequire \"#{File.expand_path('../../../lib/activeadmin-xls', __FILE__)}\"\n",
+                 "\nrequire '#{lib_path}'\n",
                  after: "require File.expand_path('../application', __FILE__)"
 
 # Add some translations
