@@ -26,7 +26,7 @@ module ActiveAdmin
       #
       #     }
       #   end
-      #   @see ActiveAdmin::Axlsx::DSL
+      #   @see ActiveAdmin::xls::DSL
       def initialize(resource_class, options = {}, &block)
         @skip_header = false
         @resource_class = resource_class
