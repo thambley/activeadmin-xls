@@ -17,7 +17,7 @@ All resource index views will now include a link for download directly
 to xls.
 
 ```ruby
-gem 'activeadmin-xls', '~>1.0.0'
+gem 'activeadmin-xls', '~>1.1.0'
 ```
 
 For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
@@ -69,6 +69,15 @@ ActiveAdmin.register Post do
 end
 ```
 
+### Restrict columns to a list
+
+```ruby
+# app/admin/posts.rb
+ActiveAdmin.register Post do
+  config.xls_builder.only_columns :title, :author
+end
+```
+
 ## Using the DSL
 
 Everything that you do with the config's default builder can be done via
@@ -89,10 +98,13 @@ ActiveAdmin.register Post do
     # Do not serialize the header, only output data.
     # skip_header
 
+    # restrict columns to a list without customization
+    # only_columns :title, :author
+
     # deleting columns from the report
     delete_columns :id, :created_at, :updated_at
 
-    # adding a column to the report
+    # adding a column to the report with customization
     column(:author) { |post| "#{post.author.first_name} #{post.author.last_name}" }
 
     # inserting additional data with after_filter

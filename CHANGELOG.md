@@ -2,13 +2,15 @@
 
 ## [Unreleased]
 
+## 1.1.0
+
 ### Added
 
 * Add only_columns [#7][]
 
 ### Fixed
 
-* Fix typo in README.md cpunion [#11][] by [@cpunion][]
+* Fix typo in README.md [#11][] by [@cpunion][]
 
 ### Changed
 
