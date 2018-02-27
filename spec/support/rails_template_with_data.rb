@@ -26,9 +26,15 @@ scopes = <<-SCOPES
   end
 SCOPES
 
-inject_into_file 'app/admin/post.rb',
-                 scopes,
-                 after: "ActiveAdmin.register Post do\n"
+if File.exist?('app/admin/post.rb')
+  inject_into_file 'app/admin/post.rb',
+                   scopes,
+                   after: "ActiveAdmin.register Post do\n"
+else
+  inject_into_file 'app/admin/posts.rb',
+                   scopes,
+                   after: "ActiveAdmin.register Post do\n"
+end
 
 # Setup some default data
 append_file 'db/seeds.rb', <<-SEEDS

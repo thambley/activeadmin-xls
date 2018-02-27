@@ -6,7 +6,7 @@ ruby_minor_version = RUBY_VERSION.split('.')[1].to_i
 
 eval_gemfile(File.expand_path(File.join('..', 'Gemfile'), __dir__))
 
-gem 'activeadmin', '1.0.0'
+gem 'activeadmin', '1.2.1'
 gem 'devise', '~> 4.2'
 gem 'rails', '4.2.10'
 gem 'turbolinks', '~> 5.0.0'
