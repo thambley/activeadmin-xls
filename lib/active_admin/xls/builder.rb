@@ -138,6 +138,15 @@ module ActiveAdmin
         end
       end
 
+      # remove all columns, and add columns by name
+      # each column_name should be a symbol
+      def only_columns(*column_names)
+        clear_columns
+        column_names.each do |column_name|
+          column column_name
+        end
+      end
+
       # Serializes the collection provided
       # @return [Spreadsheet::Workbook]
       def serialize(collection, view_context = nil)

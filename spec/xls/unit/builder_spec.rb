@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 module ActiveAdmin
+  # tests for builder
   module Xls
     describe Builder do
       let(:builder) { Builder.new(Post) }
@@ -22,6 +23,11 @@ module ActiveAdmin
         it 'deletes columns we tell it we dont want' do
           builder.delete_columns :id, :body
           expect(builder.columns.size).to eq(content_columns.size - 1)
+        end
+
+        it 'lets us use specific columns in a list' do
+          builder.only_columns :title, :author
+          expect(builder.columns.size).to eq(2)
         end
 
         it 'lets us say we dont want the header' do
@@ -53,7 +59,9 @@ module ActiveAdmin
           end
 
           it 'evaluates custom column blocks' do
-            expect(builder.columns.last.data.call(post)).to eq('Hot Dawg - with cheese')
+            expect(builder.columns.last.data.call(post)).to eq(
+              'Hot Dawg - with cheese'
+            )
           end
         end
       end
@@ -61,10 +69,16 @@ module ActiveAdmin
       context 'sheet generation without headers' do
         let!(:users) { [User.new(first_name: 'bob', last_name: 'nancy')] }
 
-        let!(:posts) { [Post.new(title: 'bob', body: 'is a swell guy', author: users.first)] }
+        let!(:posts) do
+          [Post.new(title: 'bob', body: 'is a swell guy', author: users.first)]
+        end
 
         let!(:builder) do
-          Builder.new(Post, header_format: { weight: :bold }, i18n_scope: %i[xls post]) do
+          options = {
+            header_format: { weight: :bold },
+            i18n_scope: %i[xls post]
+          }
+          Builder.new(Post, options) do
             skip_header
           end
         end
@@ -117,7 +131,11 @@ module ActiveAdmin
 
       context 'Sheet generation with a highly customized configuration.' do
         let!(:builder) do
-          Builder.new(Post, header_style: { size: 10, color: 'red' }, i18n_scope: %i[xls post]) do
+          options = {
+            header_style: { size: 10, color: 'red' },
+            i18n_scope: %i[xls post]
+          }
+          Builder.new(Post, options) do
             delete_columns :id, :created_at, :updated_at
             column(:author) do |resource|
               "#{resource.author.first_name} #{resource.author.last_name}"
@@ -178,7 +196,9 @@ module ActiveAdmin
 
         it 'translates the header row based on our i18n scope' do
           header_row = @book.worksheets.first.row(2)
-          expect(header_row).to eq(['Title', 'Content', 'Published On', 'Publisher'])
+          expect(header_row).to eq(
+            ['Title', 'Content', 'Published On', 'Publisher']
+          )
         end
 
         it 'processes the before filter' do

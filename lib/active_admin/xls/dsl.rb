@@ -9,6 +9,7 @@ module ActiveAdmin
                :header_format,
                :header_style,
                :i18n_scope,
+               :only_columns,
                :skip_header,
                :whitelist,
                to: :xls_builder,
