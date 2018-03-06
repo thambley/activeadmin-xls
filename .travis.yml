@@ -1,0 +1,12 @@
+language: ruby
+
+rvm:
+  - 2.2
+
+gemfile:
+  - gemfiles/rails_32.gemfile
+  - gemfiles/rails_42.gemfile
+
+script:
+  - bundle exec rake setup
+  - bundle exec rake
