@@ -1,6 +1,6 @@
 module ActiveAdmin
   module Xls
-    # extends activeadmin with xls downloads
+    # Extends ActiveAdmin with xls downloads
     class Engine < ::Rails::Engine
       engine_name 'active_admin_xls'
 

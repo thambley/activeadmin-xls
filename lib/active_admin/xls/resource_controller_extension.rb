@@ -1,5 +1,6 @@
 module ActiveAdmin
   module Xls
+    # Extends the resource controller to respond to xls requests
     module ResourceControllerExtension
       def self.included(base)
         base.send :alias_method_chain, :per_page, :xls
@@ -8,6 +9,9 @@ module ActiveAdmin
         base.send :respond_to, :xls
       end
 
+      # Patches index to respond to requests with xls mime type by
+      # sending a generated xls document serializing the current
+      # collection
       def index_with_xls
         index_without_xls do |format|
           format.xls do
@@ -29,6 +33,11 @@ module ActiveAdmin
         end
       end
 
+      # Patches rescue_active_admin_access_denied to respond to xls
+      # mime type. Provides administrators information on how to
+      # configure activeadmin to respond propertly to xls requests
+      #
+      # param exception [Exception] unauthorized access error
       def rescue_active_admin_access_denied_with_xls(exception)
         if request.format == Mime::Type.lookup_by_extension(:xls)
           respond_to do |format|
@@ -42,8 +51,10 @@ module ActiveAdmin
         end
       end
 
-      # patch per_page to use the CSV record max for pagination
+      # Patches per_page to use the CSV record max for pagination
       # when the format is xls
+      #
+      # @return [Integer] maximum records per page
       def per_page_with_xls
         if request.format == Mime::Type.lookup_by_extension(:xls)
           return max_per_page if respond_to?(:max_per_page, true)
@@ -55,6 +66,8 @@ module ActiveAdmin
 
       # Returns a filename for the xls file using the collection_name
       # and current date such as 'my-articles-2011-06-24.xls'.
+      #
+      # @return [String] with default filename
       def xls_filename
         timestamp = Time.now.strftime('%Y-%m-%d')
         "#{resource_collection_name.to_s.tr('_', '-')}-#{timestamp}.xls"
