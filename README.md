@@ -1,14 +1,15 @@
 # Active Admin Xls
 
-Excel Spreadsheet Export for [Active Admin](https://www.activeadmin.info/)
+Excel Spreadsheet Export for [Active Admin]
 
-[![Gem Version](https://badge.fury.io/rb/activeadmin-xls.svg)](https://badge.fury.io/rb/activeadmin-xls)
+[![Version][rubygems_badge]][rubygems]
+[![Quality][codeclimate_badge]][codeclimate]
 
 ## Synopsis
 
 This gem provides xls downloads for Active Admin resources.
 
-This gem borrows heavily from [https://github.com/randym/activeadmin-axlsx](https://github.com/randym/activeadmin-axlsx) and [https://github.com/splendeo/to_xls](https://github.com/splendeo/to_xls).
+This gem borrows heavily from [activeadmin-axlsx] and [to_xls].
 
 Usage example:
 
@@ -25,6 +26,10 @@ For Active Admin 1.0, you will also have to update config/initializers/active_ad
 ```ruby
 config.download_links = %i[csv xml json xls]
 ```
+
+## Dependencies
+
+This gem depends on [spreadsheet] to generate xls files.
 
 ## Examples
 
@@ -153,3 +158,13 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
 ```text
 BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 ```
+
+[Active Admin]:https://www.activeadmin.info/
+[activeadmin-axlsx]:https://github.com/randym/activeadmin-axlsx
+[to_xls]:https://github.com/splendeo/to_xls
+[spreadsheet]:https://github.com/zdavatz/spreadsheet
+
+[rubygems_badge]: https://badge.fury.io/rb/activeadmin-xls.svg
+[rubygems]: https://badge.fury.io/rb/activeadmin-xls
+[codeclimate_badge]: https://api.codeclimate.com/v1/badges/e294712bac54d4520182/maintainability
+[codeclimate]: https://codeclimate.com/github/thambley/activeadmin-xls/maintainability
