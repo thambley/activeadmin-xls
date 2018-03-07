@@ -3,6 +3,7 @@
 Excel Spreadsheet Export for [Active Admin]
 
 [![Version][rubygems_badge]][rubygems]
+[![Travis CI][travis_badge]][travis]
 [![Quality][codeclimate_badge]][codeclimate]
 
 ## Synopsis
@@ -162,7 +163,9 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 [to_xls]:https://github.com/splendeo/to_xls
 [spreadsheet]:https://github.com/zdavatz/spreadsheet
 
-[rubygems_badge]: https://badge.fury.io/rb/activeadmin-xls.svg
-[rubygems]: https://badge.fury.io/rb/activeadmin-xls
+[rubygems_badge]: https://img.shields.io/gem/v/activeadmin-xls.svg
+[rubygems]: https://rubygems.org/gems/activeadmin-xls
+[travis_badge]: https://img.shields.io/travis/thambley/activeadmin-xls/master.svg
+[travis]: https://travis-ci.org/thambley/activeadmin-xls
 [codeclimate_badge]: https://api.codeclimate.com/v1/badges/e294712bac54d4520182/maintainability
 [codeclimate]: https://codeclimate.com/github/thambley/activeadmin-xls/maintainability
