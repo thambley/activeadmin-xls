@@ -94,8 +94,6 @@ append_file 'config/locales/en.yml',
 directory File.expand_path('../templates/admin', __FILE__), 'app/admin'
 
 run 'rm Gemfile'
-run 'rm -r test'
-run 'rm -r spec'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
@@ -109,6 +107,9 @@ if Rails::VERSION::MAJOR == 3
 end
 
 generate :'active_admin:install'
+
+run 'rm -r test'
+run 'rm -r spec'
 
 if Rails::VERSION::MAJOR > 3
   inject_into_file 'config/initializers/active_admin.rb',
