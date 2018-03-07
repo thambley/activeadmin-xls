@@ -5,8 +5,27 @@ require 'rspec/core/rake_task'
 desc 'Creates a test rails app for the specs to run against'
 task :setup do
   require 'rails/version'
-  system('mkdir spec/rails') unless File.exist?('spec/rails')
-  system "bundle exec rails new spec/rails/rails-#{Rails::VERSION::STRING} -m spec/support/rails_template_with_data.rb"
+  base_dir = 'spec/rails'
+  app_dir = "#{base_dir}/rails-#{Rails::VERSION::STRING}"
+  template = 'rails_template_with_data'
+
+  if File.exist? app_dir
+    puts "test app #{app_dir} already exists; skipping"
+  else
+    system "mkdir -p #{base_dir}"
+    args = %W[
+      -m spec/support/#{template}.rb
+      --skip-bundle
+      --skip-listen
+      --skip-turbolinks
+      --skip-test-unit
+      --skip-coffee
+    ]
+
+    command = ['bundle', 'exec', 'rails', 'new', app_dir, *args].join(' ')
+    env = { 'BUNDLE_GEMFILE' => ENV['BUNDLE_GEMFILE'] }
+    Bundler.with_clean_env { Kernel.exec(env, command) }
+  end
 end
 
 RSpec::Core::RakeTask.new
