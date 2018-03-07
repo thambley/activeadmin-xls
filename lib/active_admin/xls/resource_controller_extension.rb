@@ -15,15 +15,8 @@ module ActiveAdmin
       def index_with_xls
         index_without_xls do |format|
           format.xls do
-            xls_collection = if method(:find_collection).arity.zero?
-                               collection
-                             else
-                               find_collection except: :pagination
-                             end
-            xls = active_admin_config.xls_builder.serialize(
-              xls_collection,
-              view_context
-            )
+            xls = active_admin_config.xls_builder.serialize(xls_collection,
+                                                            view_context)
             send_data(xls,
                       filename: xls_filename,
                       type: Mime::Type.lookup_by_extension(:xls))
@@ -71,6 +64,17 @@ module ActiveAdmin
       def xls_filename
         timestamp = Time.now.strftime('%Y-%m-%d')
         "#{resource_collection_name.to_s.tr('_', '-')}-#{timestamp}.xls"
+      end
+
+      # Returns the collection to use when generating an xls file.
+      # It uses the find_collection function if it is available, and uses
+      # collection if find_collection isn't available.
+      def xls_collection
+        if method(:find_collection).arity.zero?
+          collection
+        else
+          find_collection except: :pagination
+        end
       end
     end
   end
