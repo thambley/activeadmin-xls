@@ -14,4 +14,5 @@ group :test do
   gem 'rspec-mocks', '~> 3.7'
   gem 'rspec-rails', '~> 3.7'
   gem 'simplecov', require: false
+  gem 'codecov', require: false
 end
