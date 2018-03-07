@@ -5,6 +5,7 @@ Excel Spreadsheet Export for [Active Admin]
 [![Version][rubygems_badge]][rubygems]
 [![Travis CI][travis_badge]][travis]
 [![Quality][codeclimate_badge]][codeclimate]
+[![Coverage][codecov_badge]][codecov]
 
 ## Synopsis
 
@@ -169,3 +170,5 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 [travis]: https://travis-ci.org/thambley/activeadmin-xls
 [codeclimate_badge]: https://api.codeclimate.com/v1/badges/e294712bac54d4520182/maintainability
 [codeclimate]: https://codeclimate.com/github/thambley/activeadmin-xls/maintainability
+[codecov_badge]: https://codecov.io/gh/thambley/activeadmin-xls/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/thambley/activeadmin-xls
