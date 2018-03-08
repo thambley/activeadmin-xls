@@ -19,7 +19,7 @@ This gem borrows heavily from [activeadmin-axlsx] and [to_xls].
 Add the following to your Gemfile. All resource index views will now include a link for download directly to xls.
 
 ```ruby
-gem 'activeadmin-xls', '2.0.0-alpha'
+gem 'activeadmin-xls', '~>2.0.0'
 ```
 
 For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
