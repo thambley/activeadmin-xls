@@ -93,8 +93,8 @@ inject_into_file(
   after: "config.cache_classes = true\n"
 )
 
-lib_path = File.expand_path('../../../lib/activeadmin-xls', __FILE__)
 # Add our local Active Admin to the load path
+lib_path = File.expand_path('../../../lib/activeadmin-xls', __FILE__)
 inject_into_file 'config/environment.rb',
                  "\nrequire '#{lib_path}'\n",
                  after: "require File.expand_path('../application', __FILE__)"

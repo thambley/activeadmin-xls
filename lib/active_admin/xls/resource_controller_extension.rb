@@ -51,8 +51,6 @@ module ActiveAdmin
       end
 
       # Returns the collection to use when generating an xls file.
-      # It uses the find_collection function if it is available, and uses
-      # collection if find_collection isn't available.
       def xls_collection
         find_collection except: :pagination
       end

@@ -10,7 +10,7 @@ module ActiveAdmin
       # @param [Class] resource_class The resource this builder generate column
       #   information for.
       # @param [Hash] options the options for the builder
-      # @option options [Hash] :header_format a hash of format properties to
+      # @option options [Hash] :header_format A hash of format properties to
       #   apply to the header row. Any properties specified will be merged with
       #   the default header styles.
       # @option options [Array] :i18n_scope the I18n scope to use when looking
