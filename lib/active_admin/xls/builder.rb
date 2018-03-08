@@ -100,10 +100,6 @@ module ActiveAdmin
         @skip_header = true
       end
 
-      # The scope to use when looking up column names to generate the
-      # report header
-      attr_reader :i18n_scope
-
       # The I18n scope that will be used when looking up your
       # column names in the current I18n locale.
       # If you set it to [:active_admin, :resources, :posts] the
@@ -111,7 +107,7 @@ module ActiveAdmin
       # in the current translations
       #
       # @note If you do not set this, the column name will be titleized.
-      attr_writer :i18n_scope
+      attr_accessor :i18n_scope
 
       # The stored block that will be executed after your report is generated.
       #
