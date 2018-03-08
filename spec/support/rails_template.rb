@@ -24,24 +24,43 @@ if File.exist?('config/secrets.yml')
             "\ncucumber:\n  secret_key_base: #{cucumber_secret}"
 end
 
+base_record = if Rails::VERSION::MAJOR >= 5
+                'ApplicationRecord'
+              else
+                'ActiveRecord::Base'
+              end
+
 # Generate some test models
 generate :model, 'post title:string body:text published_at:datetime author_id:integer category_id:integer'
-inject_into_file 'app/models/post.rb', "  belongs_to :author, class_name: 'User'\n  belongs_to :category\n  accepts_nested_attributes_for :author\n", after: "class Post < ActiveRecord::Base\n"
-# Rails 3.2.3 model generator declare attr_accessible
-if Rails::VERSION::MAJOR == 3
-  inject_into_file 'app/models/post.rb',
-                   "  attr_accessible :author\n",
-                   before: 'end'
-end
+post_model_setup = if Rails::VERSION::MAJOR >= 5
+                     <<-MODEL
+  belongs_to :author, class_name: 'User'
+  belongs_to :category, optional: true
+  accepts_nested_attributes_for :author
+MODEL
+                   else
+                     <<-MODEL
+  belongs_to :author, class_name: 'User'
+  belongs_to :category
+  accepts_nested_attributes_for :author
+MODEL
+                   end
+inject_into_file 'app/models/post.rb',
+                 post_model_setup,
+                 after: "class Post < #{base_record}\n"
+
 generate :model, 'user type:string first_name:string last_name:string username:string age:integer'
 inject_into_file 'app/models/user.rb',
                  "  has_many :posts, foreign_key: 'author_id'\n",
-                 after: "class User < ActiveRecord::Base\n"
+                 after: "class User < #{base_record}\n"
+
 generate :model, 'publisher --migration=false --parent=User'
+
 generate :model, 'category name:string description:text'
 inject_into_file 'app/models/category.rb',
                  "  has_many :posts\n  accepts_nested_attributes_for :posts\n",
-                 after: "class Category < ActiveRecord::Base\n"
+                 after: "class Category < #{base_record}\n"
+
 generate :model, 'store name:string'
 
 # Generate a model with string ids
@@ -65,13 +84,7 @@ MODEL
 
 inject_into_file 'app/models/tag.rb',
                  id_model_setup,
-                 after: "class Tag < ActiveRecord::Base\n"
-
-if Rails::VERSION::MAJOR == 3 && Rails::VERSION::MINOR == 1 # Rails 3.1 Gotcha
-  gsub_file 'app/models/tag.rb',
-            /self\.primary_key.*$/,
-            'define_attr_method :primary_key, :id'
-end
+                 after: "class Tag < #{base_record}\n"
 
 # Configure default_url_options in test environment
 inject_into_file(
@@ -97,25 +110,14 @@ run 'rm Gemfile'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-if Rails::VERSION::MAJOR == 3
-  # we need this routing path, named "logout_path", for testing
-  route <<-ROUTE
-  devise_scope :user do
-    match '/admin/logout' => 'active_admin/devise/sessions#destroy', as: :logout
-  end
-  ROUTE
-end
-
 generate :'active_admin:install'
 
 run 'rm -r test'
 run 'rm -r spec'
 
-if Rails::VERSION::MAJOR > 3
-  inject_into_file 'config/initializers/active_admin.rb',
-                   "  config.download_links = %i[csv xml json xls]\n",
-                   after: "  # == Download Links\n"
-end
+inject_into_file 'config/initializers/active_admin.rb',
+                 "  config.download_links = %i[csv xml json xls]\n",
+                 after: "  # == Download Links\n"
 
 # Setup a root path for devise
 route "root to: 'admin/dashboard#index'"

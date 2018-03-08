@@ -19,7 +19,7 @@ This gem borrows heavily from [activeadmin-axlsx] and [to_xls].
 Add the following to your Gemfile. All resource index views will now include a link for download directly to xls.
 
 ```ruby
-gem 'activeadmin-xls', '~>1.1.0'
+gem 'activeadmin-xls', '2.0.0-alpha'
 ```
 
 For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
@@ -132,20 +132,6 @@ Running specs for this gem requires that you construct a rails application.
 
 To execute the specs, navigate to the gem directory, run bundle install and run these to rake tasks:
 
-### Rails 3.2
-
-```text
-bundle install --gemfile=gemfiles/rails_32.gemfile
-```
-
-```text
-BUNDLE_GEMFILE=gemfiles/rails_32.gemfile bundle exec rake setup
-```
-
-```text
-BUNDLE_GEMFILE=gemfiles/rails_32.gemfile bundle exec rake
-```
-
 ### Rails 4.2
 
 ```text
@@ -158,6 +144,20 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
 
 ```text
 BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
+```
+
+### Rails 5.1
+
+```text
+bundle install --gemfile=gemfiles/rails_51.gemfile
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake setup
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake
 ```
 
 [Active Admin]:https://www.activeadmin.info/

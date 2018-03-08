@@ -2,18 +2,15 @@ module ActiveAdmin
   module Xls
     # Extends the resource controller to respond to xls requests
     module ResourceControllerExtension
-      def self.included(base)
-        base.send :alias_method_chain, :per_page, :xls
-        base.send :alias_method_chain, :index, :xls
-        base.send :alias_method_chain, :rescue_active_admin_access_denied, :xls
-        base.send :respond_to, :xls
+      def self.prepended(base)
+        base.send :respond_to, :xls, only: :index
       end
 
       # Patches index to respond to requests with xls mime type by
       # sending a generated xls document serializing the current
       # collection
-      def index_with_xls
-        index_without_xls do |format|
+      def index
+        super do |format|
           format.xls do
             xls = active_admin_config.xls_builder.serialize(xls_collection,
                                                             view_context)
@@ -31,7 +28,7 @@ module ActiveAdmin
       # configure activeadmin to respond propertly to xls requests
       #
       # param exception [Exception] unauthorized access error
-      def rescue_active_admin_access_denied_with_xls(exception)
+      def rescue_active_admin_access_denied(exception)
         if request.format == Mime::Type.lookup_by_extension(:xls)
           respond_to do |format|
             format.xls do
@@ -40,21 +37,8 @@ module ActiveAdmin
             end
           end
         else
-          rescue_active_admin_access_denied_without_xls(exception)
+          super(exception)
         end
-      end
-
-      # Patches per_page to use the CSV record max for pagination
-      # when the format is xls
-      #
-      # @return [Integer] maximum records per page
-      def per_page_with_xls
-        if request.format == Mime::Type.lookup_by_extension(:xls)
-          return max_per_page if respond_to?(:max_per_page, true)
-          active_admin_config.max_per_page
-        end
-
-        per_page_without_xls
       end
 
       # Returns a filename for the xls file using the collection_name
@@ -70,11 +54,7 @@ module ActiveAdmin
       # It uses the find_collection function if it is available, and uses
       # collection if find_collection isn't available.
       def xls_collection
-        if method(:find_collection).arity.zero?
-          collection
-        else
-          find_collection except: :pagination
-        end
+        find_collection except: :pagination
       end
     end
   end
