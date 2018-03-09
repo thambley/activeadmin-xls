@@ -1,5 +1,6 @@
 module ActiveAdmin
   module Xls
-    VERSION = '1.0.3'
+    # ActiveAdmin XLS gem version
+    VERSION = '2.0.0'.freeze
   end
 end

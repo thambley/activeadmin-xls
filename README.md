@@ -1,42 +1,42 @@
-Active Admin Xls: Excel Spreadsheet Export for Active Admin
-====================================
+# Active Admin Xls
 
-**Git**:[http://github.com/thambley/activeadmin-xls](http://github.com/thambley/activeadmin-xls)
+Excel Spreadsheet Export for [Active Admin]
 
-**Author**:  Todd Hambley
+[![Version][rubygems_badge]][rubygems]
+[![Travis CI][travis_badge]][travis]
+[![Quality][codeclimate_badge]][codeclimate]
+[![Coverage][codecov_badge]][codecov]
+[![Inch CI][inch_badge]][inch]
 
-**Copyright**:    2014 ~ 2016
-
-**License**: MIT License
-
-**Latest Version**: 1.0.3
-
-**Release Date**: 2014.09.21
-
-Synopsis
---------
+## Synopsis
 
 This gem provides xls downloads for Active Admin resources.
 
-This gem borrows heavily from [https://github.com/randym/activeadmin-axlsx](https://github.com/randym/activeadmin-axlsx) and [https://github.com/splendeo/to_xls](https://github.com/splendeo/to_xls).
+This gem borrows heavily from [activeadmin-axlsx] and [to_xls].
 
+## Usage
 
-Usage example:
+Add the following to your Gemfile. All resource index views will now include a link for download directly to xls.
 
-Add the following to your Gemfile and you are good to go.
-All resource index views will now include a link for download directly
-to xls.
-
-```
-gem 'activeadmin-xls'
+```ruby
+gem 'activeadmin-xls', '~>2.0.0'
 ```
 
-Cool Toys
----------
+For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
+
+```ruby
+config.download_links = %i[csv xml json xls]
+```
+
+## Dependencies
+
+This gem depends on [spreadsheet] to generate xls files.
+
+## Examples
 
 Here are a few quick examples of things you can easily tweak.
 
-## localize column headers
+### Localize column headers
 
 ```ruby
 # app/admin/posts.rb
@@ -45,7 +45,7 @@ ActiveAdmin.register Post do
 end
 ```
 
-## Use blocks for adding computed fields
+### Use blocks for adding computed fields
 
 ```ruby
 # app/admin/posts.rb
@@ -56,17 +56,17 @@ ActiveAdmin.register Post do
 end
 ```
 
-## Change the column header format
+### Change the column header format
 
 ```ruby
 # app/admin/posts.rb
 ActiveAdmin.register Post do
-  config.xls_builder.header_format = { :weight => :bold,
-                                       :color => :blue }
+  config.xls_builder.header_format = { weight: :bold,
+                                       color: :blue }
 end
 ```
 
-## Remove columns
+### Remove columns
 
 ```ruby
 # app/admin/posts.rb
@@ -75,7 +75,16 @@ ActiveAdmin.register Post do
 end
 ```
 
-# Using the DSL
+### Restrict columns to a list
+
+```ruby
+# app/admin/posts.rb
+ActiveAdmin.register Post do
+  config.xls_builder.only_columns :title, :author
+end
+```
+
+## Using the DSL
 
 Everything that you do with the config's default builder can be done via
 the resource DSL.
@@ -86,8 +95,8 @@ Below is an example of the DSL
 ActiveAdmin.register Post do
 
   # i18n_scope and header style are set via options
-  xlsx(:i18n_scope => [:active_admin, :xls, :post],
-       :header_style => {:weight => :bold, :color => :blue }) do
+  xls(i18n_scope: [:active_admin, :xls, :post],
+      header_format: { weight: :bold, color: :blue }) do
 
     # Specify that you want to white list column output.
     # whitelist
@@ -95,18 +104,21 @@ ActiveAdmin.register Post do
     # Do not serialize the header, only output data.
     # skip_header
 
+    # restrict columns to a list without customization
+    # only_columns :title, :author
+
     # deleting columns from the report
     delete_columns :id, :created_at, :updated_at
 
-    # adding a column to the report
-    column(:author) { |resource| "#{resource.author.first_name} #{resource.author.last_name}" }
+    # adding a column to the report with customization
+    column(:author) { |post| "#{post.author.first_name} #{post.author.last_name}" }
 
-    # creating a chart and inserting additional data with after_filter
-    after_filter { |sheet|
+    # inserting additional data with after_filter
+    after_filter do |sheet|
       # todo
-    }
+    end
 
-    # iserting data with before_filter
+    # inserting data with before_filter
     before_filter do |sheet|
       # todo
     end
@@ -114,23 +126,52 @@ ActiveAdmin.register Post do
 end
 ```
 
-# Specs
-------
+## Testing
+
 Running specs for this gem requires that you construct a rails application.
-To execute the specs, navigate to the gem directory,
-run bundle install and run these to rake tasks:
 
-```
-bundle exec rake setup
-```
+To execute the specs, navigate to the gem directory, run bundle install and run these to rake tasks:
 
-```
-bundle exec rake
+### Rails 4.2
+
+```text
+bundle install --gemfile=gemfiles/rails_42.gemfile
 ```
 
-# Copyright and License
-----------
+```text
+BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
+```
 
-activeadmin-xls &copy; 2014 by [Todd Hambley](mailto:thambley@travelleaders.com).
+```text
+BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
+```
 
-activeadmin-xls is licensed under the MIT license. Please see the LICENSE document for more information.
+### Rails 5.1
+
+```text
+bundle install --gemfile=gemfiles/rails_51.gemfile
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake setup
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake
+```
+
+[Active Admin]:https://www.activeadmin.info/
+[activeadmin-axlsx]:https://github.com/randym/activeadmin-axlsx
+[to_xls]:https://github.com/splendeo/to_xls
+[spreadsheet]:https://github.com/zdavatz/spreadsheet
+
+[rubygems_badge]: https://img.shields.io/gem/v/activeadmin-xls.svg
+[rubygems]: https://rubygems.org/gems/activeadmin-xls
+[travis_badge]: https://img.shields.io/travis/thambley/activeadmin-xls/master.svg
+[travis]: https://travis-ci.org/thambley/activeadmin-xls
+[codeclimate_badge]: https://api.codeclimate.com/v1/badges/e294712bac54d4520182/maintainability
+[codeclimate]: https://codeclimate.com/github/thambley/activeadmin-xls/maintainability
+[codecov_badge]: https://codecov.io/gh/thambley/activeadmin-xls/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/thambley/activeadmin-xls
+[inch_badge]: http://inch-ci.org/github/thambley/activeadmin-xls.svg?branch=master
+[inch]: http://inch-ci.org/github/thambley/activeadmin-xls

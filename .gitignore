@@ -1,10 +1,11 @@
 spec/rails
 *.gem
 coverage
-*.xlsx
+*.xls
 doc
 *.un~
 .yardoc
 .rbenv-version
 .ruby-version
 /Gemfile.lock
+gemfiles/*.gemfile.lock

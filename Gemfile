@@ -1,29 +1,18 @@
 source 'https://rubygems.org'
-gem 'spreadsheet'
-gem 'activeadmin', github: 'gregbell/active_admin'
-gemspec
+
+gem 'spreadsheet', '~> 1.1', '>= 1.1.4'
 
 group :development, :test do
-  gem 'sqlite3'
-  gem 'haml', :require => false
-  gem 'yard'
-  gem 'rdiscount' # For yard
-  gem "sprockets"
   gem 'rails-i18n' # Gives us default i18n for many languages
+  gem 'sqlite3'
+  gem 'yard'
 end
-gem 'simplecov', :require => false, :group => :test
+
 group :test do
-  gem 'inherited_resources'
-  gem 'sass-rails'
-  gem 'rspec-mocks'
-  gem 'rspec-rails'
-  gem 'cucumber-rails', :require => false
-  gem 'capybara'
+  gem 'cucumber-rails', require: false
   gem 'database_cleaner'
-  gem 'shoulda-matchers', '1.0.0'
-  gem 'launchy'
-  gem 'jslint_on_rails',    '~> 1.0.6'
-  gem 'guard-rspec'
-  gem "guard-coffeescript"
-  gem 'jasmine'
+  gem 'rspec-mocks', '~> 3.7'
+  gem 'rspec-rails', '~> 3.7'
+  gem 'simplecov', require: false
+  gem 'codecov', require: false
 end
