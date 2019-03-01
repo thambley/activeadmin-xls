@@ -264,11 +264,13 @@ module ActiveAdmin
       def serialize(collection, view_context = nil)
         @collection = collection
         @view_context = view_context
+        book = Spreadsheet::Workbook.new
+        sheet = book.create_worksheet
         load_columns unless @columns_loaded
-        apply_filter @before_filter
-        export_collection(collection)
-        apply_filter @after_filter
-        to_stream
+        apply_filter @before_filter, sheet
+        export_collection collection, sheet
+        apply_filter @after_filter, sheet
+        to_stream book
       end
 
       # Xls column information
@@ -314,18 +316,13 @@ module ActiveAdmin
         columns
       end
 
-      def to_stream
+      def to_stream(book)
         stream = StringIO.new('')
         book.write stream
-        clean_up
         stream.string
       end
 
-      def clean_up
-        @book = @sheet = nil
-      end
-
-      def export_collection(collection)
+      def export_collection(collection, sheet)
         return if columns.none?
         row_index = sheet.dimensions[1]
 
@@ -354,7 +351,7 @@ module ActiveAdmin
         end.compact
       end
 
-      def apply_filter(filter)
+      def apply_filter(filter, sheet)
         filter.call(sheet) if filter
       end
 
@@ -374,14 +371,6 @@ module ActiveAdmin
       def in_scope(resource, column)
         return true unless column.name.is_a?(Symbol)
         resource.respond_to?(column.name)
-      end
-
-      def sheet
-        @sheet ||= book.create_worksheet
-      end
-
-      def book
-        @book ||= ::Spreadsheet::Workbook.new
       end
 
       def resource_columns(resource)

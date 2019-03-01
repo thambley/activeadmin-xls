@@ -84,12 +84,7 @@ module ActiveAdmin
         end
 
         before do
-          # disable clean up so we can get the book.
-          allow(builder).to receive(:clean_up) { false }
-          # @book = Spreadsheet.open(builder.serialize(posts))
-          builder.serialize(posts)
-          @book = builder.send(:book)
-          @collection = builder.collection
+          @book = Spreadsheet.open(StringIO.new(builder.serialize(posts)))
         end
 
         it 'does not serialize the header' do
@@ -113,12 +108,7 @@ module ActiveAdmin
         end
 
         before do
-          allow(User).to receive(:all) { users }
-          allow(Post).to receive(:all) { posts }
-          # disable clean up so we can get the book.
-          allow(builder).to receive(:clean_up) { false }
-          builder.serialize(Post.all)
-          @book = builder.send(:book)
+          @book = Spreadsheet.open(StringIO.new(builder.serialize(posts)))
           @collection = builder.collection
         end
 
@@ -173,10 +163,7 @@ module ActiveAdmin
           @post = Post.create!(title: 'bob',
                                body: 'is a swell guy',
                                author: @user)
-          # disable clean up so we can get the book.
-          allow(builder).to receive(:clean_up) { false }
-          builder.serialize(Post.all)
-          @book = builder.send(:book)
+          @book = Spreadsheet.open(StringIO.new(builder.serialize(Post.all)))
           @collection = builder.collection
         end
 
@@ -209,6 +196,48 @@ module ActiveAdmin
           expect(@book.worksheets.first.last_row[0]).to eq('Set In Proc nancy')
         end
       end
+
+      ################################
+      context 'Sheet generation with a exceptions.' do
+        let!(:users) { [User.new(first_name: 'bob', last_name: 'nancy')] }
+
+        let!(:posts) do
+          [Post.new(title: 'bob', body: 'is a swell guy', author: users.first)]
+        end
+
+        let!(:exposts) do
+          [Post.new(title: 'sal', body: 'is a swell guy', author: users.first),
+           Post.new(title: 'err', body: 'is a swell guy', author: users.first)]
+        end
+
+        let!(:builder) do
+          Builder.new(Post, header_style: {}, i18n_scope: %i[xls post]) do
+            delete_columns :id, :created_at, :updated_at
+            column(:author) do |resource|
+              raise 'err' if resource.title == 'err'
+              "#{resource.author.first_name} #{resource.author.last_name}"
+            end
+          end
+        end
+
+        before do
+          begin
+            @book1 = Spreadsheet.open(StringIO.new(builder.serialize(exposts)))
+          rescue StandardError => err
+            raise unless err.message == 'err'
+          end
+          @book2 = Spreadsheet.open(StringIO.new(builder.serialize(posts)))
+          @collection = builder.collection
+        end
+
+        it 'does not contain data from other collections with errors' do
+          sheet = @book2.worksheets.first
+          expect(sheet.dimensions[1]).to eq(2)
+          expect(sheet[0, 0]).to eq('Title')
+          expect(sheet[1, 0]).to eq(@collection.first.title)
+        end
+      end
+      ################################
     end
   end
 end
