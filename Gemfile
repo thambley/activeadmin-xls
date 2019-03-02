@@ -4,7 +4,7 @@ gem 'spreadsheet', '~> 1.1', '>= 1.1.4'
 
 group :development, :test do
   gem 'rails-i18n' # Gives us default i18n for many languages
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.3.0'
   gem 'yard'
 end
 
