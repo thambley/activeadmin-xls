@@ -5,7 +5,8 @@ rvm:
 
 gemfile:
   - gemfiles/rails_42.gemfile
-  - gemfiles/rails_51.gemfile
+  - gemfiles/rails_52.gemfile
+  - gemfiles/rails_60.gemfile
 
 script:
   - bundle exec rake setup

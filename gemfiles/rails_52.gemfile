@@ -6,10 +6,10 @@ ruby_minor_version = RUBY_VERSION.split('.')[1].to_i
 
 eval_gemfile(File.expand_path(File.join('..', 'Gemfile'), __dir__))
 
-gem 'activeadmin', '1.2.1'
-gem 'devise', '~> 4.2'
-gem 'rails', '5.1.5'
-gem 'turbolinks', '~> 5.0.0'
+gem 'activeadmin', '2.4.0'
+gem 'devise', '~> 4.7'
+gem 'rails', ' ~> 5.2'
+gem 'turbolinks', '~> 5.2.0'
 gem 'tzinfo-data'
 
 group :test do
