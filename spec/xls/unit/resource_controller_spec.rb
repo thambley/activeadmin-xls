@@ -3,7 +3,7 @@ describe Admin::CategoriesController, type: :controller do
   let(:mime) { Mime::Type.lookup_by_extension(:xls) }
 
   let(:filename) do
-    "#{controller.resource_class.to_s.downcase.pluralize}-#{Time.now.strftime('%Y-%m-%d')}.xls"
+    "categories-#{Time.now.strftime('%Y-%m-%d')}.xls"
   end
 
   it 'generates an xls filename' do
