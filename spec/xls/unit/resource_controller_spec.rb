@@ -3,7 +3,7 @@ describe Admin::CategoriesController, type: :controller do
   let(:mime) { Mime::Type.lookup_by_extension(:xls) }
 
   let(:filename) do
-    "#{controller.resource_class.to_s.downcase.pluralize}-#{Time.now.strftime('%Y-%m-%d')}.xls"
+    "categories-#{Time.now.strftime('%Y-%m-%d')}.xls"
   end
 
   it 'generates an xls filename' do
@@ -15,7 +15,7 @@ describe Admin::CategoriesController, type: :controller do
       request.accept = mime
       get :index
       disposition = "attachment; filename=\"#{filename}\""
-      expect(response.headers['Content-Disposition']).to eq(disposition)
+      expect(response.headers['Content-Disposition']).to start_with(disposition)
       expect(response.headers['Content-Transfer-Encoding']).to eq('binary')
     end
   end

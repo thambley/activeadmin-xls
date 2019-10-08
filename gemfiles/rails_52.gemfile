@@ -7,8 +7,10 @@ ruby_minor_version = RUBY_VERSION.split('.')[1].to_i
 eval_gemfile(File.expand_path(File.join('..', 'Gemfile'), __dir__))
 
 gem 'activeadmin', '2.4.0'
+gem 'bootsnap', require: false
 gem 'devise', '~> 4.7'
 gem 'rails', ' ~> 5.2'
+gem 'sqlite3', '~> 1.4.0'
 gem 'turbolinks', '~> 5.2.0'
 gem 'tzinfo-data'
 
