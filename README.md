@@ -22,7 +22,7 @@ Add the following to your Gemfile. All resource index views will now include a l
 gem 'activeadmin-xls', '~>2.0.0'
 ```
 
-For Active Admin 1.0, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
+For Active Admin 1.0 and above, you will also have to update config/initializers/active_admin.rb.  Update the download\_links setting to include xls:
 
 ```ruby
 config.download_links = %i[csv xml json xls]
@@ -158,6 +158,20 @@ BUNDLE_GEMFILE=gemfiles/rails_52.gemfile bundle exec rake setup
 
 ```text
 BUNDLE_GEMFILE=gemfiles/rails_52.gemfile bundle exec rake
+```
+
+### Rails 6.0
+
+```text
+bundle install --gemfile=gemfiles/rails_60.gemfile
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_60.gemfile bundle exec rake setup
+```
+
+```text
+BUNDLE_GEMFILE=gemfiles/rails_60.gemfile bundle exec rake
 ```
 
 [Active Admin]:https://www.activeadmin.info/

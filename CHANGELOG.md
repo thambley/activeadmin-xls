@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## 2.0.2
+
+### Changed
+
+* Remove ActiveAdmin runtime dependency version limit '<2' [#16] by [@reaper][]
+
 ## 2.0.1
 
 ### Fixed
@@ -61,7 +67,9 @@
 [#8]: https://github.com/thambley/activeadmin-xls/issues/8
 [#11]: https://github.com/thambley/activeadmin-xls/pull/11
 [#13]: https://github.com/thambley/activeadmin-xls/issues/13
+[#16]: https://github.com/thambley/activeadmin-xls/pull/16
 
 [@rewritten]: https://github.com/rewritten
 [@ejaypcanaria]: https://github.com/ejaypcanaria
 [@cpunion]: https://github.com/cpunion
+[@reaper]: https://github.com/reaper
