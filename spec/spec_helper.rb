@@ -21,6 +21,21 @@ ENV['RAILS_ROOT'] = File.expand_path(
   __FILE__
 )
 
+if RUBY_VERSION >= '2.6.0'
+  if Rails.version < '5'
+    class ActionController::TestResponse < ActionDispatch::TestResponse
+      def recycle!
+        # HACK: avoid MonitorMixin double-initialize error:
+        @mon_mutex_owner_object_id = nil
+        @mon_mutex = nil
+        initialize
+      end
+    end
+  else
+    puts "Monkeypatch for ActionController::TestResponse not needed for rails #{Rails.version}"
+  end
+end
+
 # ensure testing application is in place
 unless File.exist?(ENV['RAILS_ROOT'])
   puts 'Please run bundle exec rake setup before running the specs.'
