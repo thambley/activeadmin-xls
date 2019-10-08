@@ -146,18 +146,18 @@ BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake setup
 BUNDLE_GEMFILE=gemfiles/rails_42.gemfile bundle exec rake
 ```
 
-### Rails 5.1
+### Rails 5.2
 
 ```text
-bundle install --gemfile=gemfiles/rails_51.gemfile
+bundle install --gemfile=gemfiles/rails_52.gemfile
 ```
 
 ```text
-BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake setup
+BUNDLE_GEMFILE=gemfiles/rails_52.gemfile bundle exec rake setup
 ```
 
 ```text
-BUNDLE_GEMFILE=gemfiles/rails_51.gemfile bundle exec rake
+BUNDLE_GEMFILE=gemfiles/rails_52.gemfile bundle exec rake
 ```
 
 [Active Admin]:https://www.activeadmin.info/
