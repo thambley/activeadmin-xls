@@ -15,7 +15,7 @@ describe Admin::CategoriesController, type: :controller do
       request.accept = mime
       get :index
       disposition = "attachment; filename=\"#{filename}\""
-      expect(response.headers['Content-Disposition']).to eq(disposition)
+      expect(response.headers['Content-Disposition']).to start_with(disposition)
       expect(response.headers['Content-Transfer-Encoding']).to eq('binary')
     end
   end
