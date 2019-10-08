@@ -40,6 +40,24 @@ require ENV['RAILS_ROOT'] + '/config/environment'
 # and finally,here's rspec
 require 'rspec/rails'
 
+# Rails 4.2 call `initialize` inside `recycle!`.
+# Ruby 2.6 doesn't allow calling `initialize` twice.
+# https://github.com/rails/rails/issues/34790
+if RUBY_VERSION >= '2.6.0'
+  if Rails.version < '5'
+    class ActionController::TestResponse < ActionDispatch::TestResponse
+      def recycle!
+        # HACK: avoid MonitorMixin double-initialize error:
+        @mon_mutex_owner_object_id = nil
+        @mon_mutex = nil
+        initialize
+      end
+    end
+  else
+    puts "Monkeypatch for ActionController::TestResponse not needed for rails #{Rails.version}"
+  end
+end
+
 # Disabling authentication in specs so that we don't have to worry about
 # it allover the place
 ActiveAdmin.application.authentication_method = false
