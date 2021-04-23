@@ -2,11 +2,17 @@
 
 ## [Unreleased]
 
+## 2.0.3
+
+### Changed
+
+* ignore test/ folder for gem building [#21][] by [@cprodhomme][]
+
 ## 2.0.2
 
 ### Changed
 
-* Remove ActiveAdmin runtime dependency version limit '<2' [#16] by [@reaper][]
+* Remove ActiveAdmin runtime dependency version limit '<2' [#16][] by [@reaper][]
 
 ## 2.0.1
 
@@ -68,8 +74,10 @@
 [#11]: https://github.com/thambley/activeadmin-xls/pull/11
 [#13]: https://github.com/thambley/activeadmin-xls/issues/13
 [#16]: https://github.com/thambley/activeadmin-xls/pull/16
+[#21]: https://github.com/thambley/activeadmin-xls/pull/21
 
 [@rewritten]: https://github.com/rewritten
 [@ejaypcanaria]: https://github.com/ejaypcanaria
 [@cpunion]: https://github.com/cpunion
 [@reaper]: https://github.com/reaper
+[@cprodhomme]: https://github.com/cprodhomme
