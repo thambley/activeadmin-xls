@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   git_tracked_files = `git ls-files`.split("\n").sort
   gem_ignored_files = `git ls-files -i -X .gemignore`.split("\n")
 
-  s.files = git_tracked_files - gem_ignored_files
+  s.files = (git_tracked_files - gem_ignored_files).reject { |f| f.match(%r{^(test|spec|features)/}) }
 
   s.add_runtime_dependency 'activeadmin', '>= 1.0.0'
   s.add_runtime_dependency 'spreadsheet', '~> 1.0'
