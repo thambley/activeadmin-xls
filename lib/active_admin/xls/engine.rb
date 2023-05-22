@@ -9,14 +9,17 @@ module ActiveAdmin
           Mime::Type.register 'application/vnd.ms-excel', :xls
         end
 
-        ActiveAdmin::Views::PaginatedCollection.add_format :xls
+        
+        ActiveAdmin.before_load do |_app|
+          ActiveAdmin::Views::PaginatedCollection.add_format :xls
 
-        ActiveAdmin::ResourceDSL.send :include, ActiveAdmin::Xls::DSL
-        ActiveAdmin::Resource.send :include, ActiveAdmin::Xls::ResourceExtension
-        ActiveAdmin::ResourceController.send(
-          :prepend,
-          ActiveAdmin::Xls::ResourceControllerExtension
-        )
+          ActiveAdmin::ResourceDSL.send :include, ActiveAdmin::Xls::DSL
+          ActiveAdmin::Resource.send :include, ActiveAdmin::Xls::ResourceExtension
+          ActiveAdmin::ResourceController.send(
+            :prepend,
+            ActiveAdmin::Xls::ResourceControllerExtension
+          )
+        end
       end
     end
   end
