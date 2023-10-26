@@ -292,7 +292,10 @@ module ActiveAdmin
         #   value, or a block used to generate the value to display.
         attr_reader :data
 
-        # Returns a localized version of the column name if a scope is given.
+        # Returns a localized version of the column name if a scope is given
+        # or the default titleized column name if the localized version is not
+        # found.
+        #
         # Otherwise, it returns the titleized column name without translation.
         #
         # @param i18n_scope [String, Symbol, Array<String>, Array<Symbol>]
@@ -301,7 +304,7 @@ module ActiveAdmin
         # @see I18n
         def localized_name(i18n_scope = nil)
           return name.to_s.titleize unless i18n_scope
-          I18n.t name, scope: i18n_scope
+          I18n.t name, scope: i18n_scope, default: name.to_s.titleize
         end
       end
 
