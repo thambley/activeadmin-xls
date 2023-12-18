@@ -21,9 +21,9 @@ Gem::Specification.new do |s|
 
   s.files = (git_tracked_files - gem_ignored_files).reject { |f| f.match(%r{^(test|spec|features)/}) }
 
-  s.add_runtime_dependency 'activeadmin', '>= 1.0.0'
+  s.add_runtime_dependency 'activeadmin', '>= 2.0.0', '< 4.0'
   s.add_runtime_dependency 'spreadsheet', '~> 1.0'
 
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.7.0'
   s.require_path = 'lib'
 end
